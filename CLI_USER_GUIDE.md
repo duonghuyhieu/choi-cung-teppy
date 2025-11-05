@@ -49,13 +49,15 @@ npx @duonghuyhieu/game-saver
 2. Gõ `cmd` và Enter
 3. Hoặc tìm "Command Prompt" trong Start Menu
 
-### Bước 2: Chạy CLI
+### Bước 2: Chạy Game Saver
 
 ```bash
 npx @duonghuyhieu/game-saver
 ```
 
-### Bước 3: Giao diện sẽ hiện ra
+### Bước 3: Chọn chế độ
+
+Bạn sẽ thấy menu chọn chế độ:
 
 ```
  ██████   █████  ███    ███ ███████     ███████  █████  ██    ██ ███████ ██████
@@ -66,6 +68,31 @@ npx @duonghuyhieu/game-saver
 
 Quan ly va dong bo save game tren cloud
 
+? Chon che do:
+❯ [1] 🌐 GUI Mode - Giao dien do hoa (Web)
+  [2] ⌨️  CLI Mode - Giao dien dong lenh (Terminal)
+  [0] 🚪 Thoat
+```
+
+**Chọn chế độ phù hợp:**
+- **[1] GUI Mode**: Giao diện đồ họa trong browser (đẹp hơn, dễ dùng hơn)
+- **[2] CLI Mode**: Giao diện terminal (nhanh, hoạt động mọi nơi)
+
+### Bước 4: Sử dụng
+
+#### Nếu chọn GUI Mode:
+
+1. Server sẽ khởi động tự động
+2. Browser mở tại `http://localhost:3000`
+3. Sử dụng giao diện web như website bình thường
+
+**Lưu ý:** GUI Mode chỉ khả dụng khi bạn clone repository và chạy local dev server. Nếu chạy qua `npx`, nên chọn CLI Mode.
+
+#### Nếu chọn CLI Mode:
+
+Tiếp tục với menu đăng nhập/đăng ký:
+
+```
 ? Chon hanh dong:
 ❯ [1] Dang nhap
   [2] Dang ky
@@ -347,9 +374,43 @@ Mặc định save của bạn là **private** (chỉ bạn thấy). Admin mới
 - Thử lại sau vài phút
 - Liên hệ admin
 
-### 10. Tôi có thể dùng trên Linux/Mac không?
+### 10. GUI Mode không khởi động được?
 
-Hiện tại CLI chỉ hỗ trợ **Windows** vì:
+**Nguyên nhân:**
+- Chưa clone repository về máy
+- Chưa cài dependencies
+- Port 3000 đã bị chiếm
+
+**Giải pháp:**
+```bash
+# Clone repository
+git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+cd choi-cung-teppy
+
+# Install dependencies
+npm install
+
+# Chạy GUI
+npm run cli:gui
+```
+
+### 11. Khác biệt giữa GUI Mode và CLI Mode?
+
+| Tính năng | GUI Mode | CLI Mode |
+|-----------|----------|----------|
+| Giao diện | Web browser (đẹp) | Terminal (text) |
+| Tốc độ | Cần khởi động server | Chạy ngay lập tức |
+| Yêu cầu | Clone repo + npm install | Chỉ cần Node.js |
+| Upload/Download | ✅ Có | ✅ Có |
+| Quản lý game (admin) | ✅ Có | ❌ Không |
+
+**Khuyến nghị:**
+- **GUI Mode**: Nếu bạn đã clone repo, thích UI đẹp
+- **CLI Mode**: Nếu dùng `npx`, muốn nhanh gọn
+
+### 12. Tôi có thể dùng trên Linux/Mac không?
+
+Hiện tại chỉ hỗ trợ **Windows** vì:
 - Save path dùng `%APPDATA%`, `%LOCALAPPDATA%`
 - Hầu hết games PC chỉ có trên Windows
 

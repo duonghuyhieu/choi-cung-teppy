@@ -17,7 +17,7 @@ node -v
 
 ---
 
-## 🚀 Bước 1: Chạy CLI
+## 🚀 Bước 1: Chạy Game Saver
 
 Mở **Command Prompt** (Win + R → gõ `cmd`) và chạy:
 
@@ -27,9 +27,39 @@ npx @duonghuyhieu/game-saver
 
 > Lần đầu sẽ tải về ~5MB, các lần sau chạy ngay!
 
+Bạn sẽ thấy menu chọn chế độ:
+
+```
+? Chon che do:
+❯ [1] 🌐 GUI Mode - Giao dien do hoa (Web)
+  [2] ⌨️  CLI Mode - Giao dien dong lenh (Terminal)
+  [0] 🚪 Thoat
+```
+
+**Chọn [1] GUI Mode** để mở giao diện đồ họa trong browser!
+**Hoặc [2] CLI Mode** để dùng giao diện terminal.
+
 ---
 
-## 👤 Bước 2: Đăng ký/Đăng nhập
+## 🌐 Sử dụng GUI Mode
+
+Nếu bạn chọn **GUI Mode**, browser sẽ tự động mở với giao diện web:
+
+1. ✅ Server khởi động tại `http://localhost:3000`
+2. ✅ Browser tự động mở (hoặc bạn mở thủ công)
+3. ✅ Giao diện đẹp, dễ sử dụng hơn CLI!
+
+**Lưu ý:** GUI Mode chỉ hoạt động khi bạn clone repository về máy và chạy local dev server.
+
+---
+
+## ⌨️ Sử dụng CLI Mode (Terminal)
+
+Nếu bạn chọn **CLI Mode**, tiếp tục với các bước sau:
+
+---
+
+## 👤 Bước 2: Đăng ký/Đăng nhập (CLI Mode)
 
 ### Đăng ký lần đầu:
 ```
