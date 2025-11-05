@@ -49,15 +49,13 @@ npx @duonghuyhieu/game-saver
 2. Gõ `cmd` và Enter
 3. Hoặc tìm "Command Prompt" trong Start Menu
 
-### Bước 2: Chạy Game Saver
+### Bước 2: Chạy CLI
 
 ```bash
 npx @duonghuyhieu/game-saver
 ```
 
-### Bước 3: Chọn chế độ
-
-Bạn sẽ thấy menu chọn chế độ:
+### Bước 3: Giao diện CLI sẽ hiện ra
 
 ```
  ██████   █████  ███    ███ ███████     ███████  █████  ██    ██ ███████ ██████
@@ -67,30 +65,6 @@ Bạn sẽ thấy menu chọn chế độ:
  ██████  ██   ██ ██      ██ ███████     ███████ ██   ██   ████   ███████ ██   ██
 
 Quan ly va dong bo save game tren cloud
-
-? Chon che do:
-❯ [1] 🖥️  Giao dien (GUI) - De dung, thich hop cho nguoi moi
-  [2] ⚡ CLI - Nhanh gon cho nguoi co kinh nghiem
-  [0] 🚪 Thoat
-```
-
-**Chọn chế độ phù hợp:**
-- **[1] Giao diện (GUI)**: Giao diện đồ họa trong browser - dễ dùng, click chuột
-- **[2] CLI**: Chạy trực tiếp trên terminal - nhanh gọn cho người có kinh nghiệm
-
-### Bước 4: Sử dụng
-
-#### Nếu chọn Giao diện (GUI):
-
-1. Server sẽ khởi động tự động
-2. Browser mở tại `http://localhost:3000`
-3. Sử dụng giao diện web như website bình thường - dễ dàng, click chuột
-
-**Lưu ý:** Chế độ Giao diện chỉ khả dụng khi bạn clone repository và chạy local dev server. Nếu chạy qua `npx`, hãy chọn CLI.
-
-#### Nếu chọn CLI:
-
-Tiếp tục với menu đăng nhập/đăng ký:
 
 ```
 ? Chon hanh dong:
@@ -374,43 +348,7 @@ Mặc định save của bạn là **private** (chỉ bạn thấy). Admin mới
 - Thử lại sau vài phút
 - Liên hệ admin
 
-### 10. GUI Mode không khởi động được?
-
-**Nguyên nhân:**
-- Chưa clone repository về máy
-- Chưa cài dependencies
-- Port 3000 đã bị chiếm
-
-**Giải pháp:**
-```bash
-# Clone repository
-git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
-cd choi-cung-teppy
-
-# Install dependencies
-npm install
-
-# Chạy GUI
-npm run cli:gui
-```
-
-### 11. Khác biệt giữa Giao diện (GUI) và CLI?
-
-| Tính năng | Giao diện (GUI) | CLI |
-|-----------|-----------------|-----|
-| Giao diện | Web browser - đẹp, dễ dùng | Terminal - text only |
-| Tốc độ | Cần khởi động server (~5s) | Chạy ngay lập tức |
-| Yêu cầu | Clone repo + npm install | Chỉ cần Node.js |
-| Sử dụng | Click chuột | Gõ lệnh |
-| Upload/Download | ✅ Có | ✅ Có |
-| Quản lý game (admin) | ✅ Có | ❌ Không |
-| Phù hợp cho | Người mới, thích giao diện đẹp | Power users, muốn nhanh |
-
-**Khuyến nghị:**
-- **Giao diện (GUI)**: Nếu bạn đã clone repo, muốn dễ dùng
-- **CLI**: Nếu dùng `npx`, muốn nhanh gọn
-
-### 12. Tôi có thể dùng trên Linux/Mac không?
+### 10. Tôi có thể dùng trên Linux/Mac không?
 
 Hiện tại chỉ hỗ trợ **Windows** vì:
 - Save path dùng `%APPDATA%`, `%LOCALAPPDATA%`

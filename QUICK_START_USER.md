@@ -17,7 +17,7 @@ node -v
 
 ---
 
-## 🚀 Bước 1: Chạy Game Saver
+## 🚀 Bước 1: Chạy CLI
 
 Mở **Command Prompt** (Win + R → gõ `cmd`) và chạy:
 
@@ -27,57 +27,11 @@ npx @duonghuyhieu/game-saver
 
 > Lần đầu sẽ tải về ~5MB, các lần sau chạy ngay!
 
-Bạn sẽ thấy menu chọn chế độ:
-
-```
-? Chon che do:
-❯ [1] 🖥️  Giao dien (GUI) - De dung, thich hop cho nguoi moi
-  [2] ⚡ CLI - Nhanh gon cho nguoi co kinh nghiem
-  [0] 🚪 Thoat
-```
-
-**Chọn [1] Giao diện (GUI)** - Giao diện đồ họa trong browser, dễ sử dụng!
-**Hoặc [2] CLI** - Nhanh gọn, chạy trực tiếp trên terminal.
+Giao diện CLI sẽ hiện ra ngay:
 
 ---
 
-## 🖥️ Option 1: Giao diện (GUI) - Dễ dùng
-
-**Ưu điểm:**
-- ✅ Giao diện đồ họa đẹp mắt, dễ nhìn
-- ✅ Click chuột thay vì gõ lệnh
-- ✅ Phù hợp cho người mới bắt đầu
-- ✅ Có đầy đủ tính năng (kể cả admin)
-
-**Khi chọn Giao diện:**
-1. Server tự động khởi động tại `http://localhost:3000`
-2. Browser tự động mở
-3. Sử dụng như một website bình thường
-
-**Lưu ý:** Chế độ Giao diện chỉ hoạt động khi bạn **clone repository về máy**:
-```bash
-git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
-cd choi-cung-teppy
-npm install
-npm run cli
-# Chọn [1] Giao diện
-```
-
----
-
-## ⚡ Option 2: CLI - Nhanh gọn
-
-**Ưu điểm:**
-- ⚡ Nhanh, nhẹ, chạy ngay
-- ⚡ Không cần clone repo
-- ⚡ Phù hợp cho power users
-- ⚡ Chạy mọi nơi có Node.js
-
-**Khi chọn CLI**, tiếp tục với các bước sau:
-
----
-
-## 👤 Bước 2: Đăng ký/Đăng nhập (CLI Mode)
+## 👤 Bước 2: Đăng ký/Đăng nhập
 
 ### Đăng ký lần đầu:
 ```

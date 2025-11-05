@@ -50,13 +50,13 @@ web/
 
 ## Cài đặt và Sử dụng
 
-### User: Chạy CLI ngay
+### Người dùng: Chạy CLI ngay
 
 ```bash
 npx @duonghuyhieu/game-saver
 ```
 
-**Giao diện CLI sẽ hiện ngay trong terminal của bạn!**
+**CLI sẽ chạy ngay trong terminal - không cần cài đặt!**
 
 ```
  ██████   █████  ███    ███ ███████     ███████  █████  ██    ██ ███████ ██████
