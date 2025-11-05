@@ -14,10 +14,15 @@ Hệ thống quản lý và đồng bộ save game trên cloud. Gồm web app (a
 ## Kiến trúc
 
 ```
-crack-game/
-├── web/          # Next.js Web App (Admin + User Portal)
-├── desktop/      # Node.js CLI Tool (NPX)
-└── shared/       # Shared TypeScript types
+web/
+├── app/          # Next.js Web App (Admin + User Portal)
+├── cli/          # Node.js CLI Tool
+│   ├── index.ts          # CLI entry point
+│   ├── config.ts         # API configuration
+│   └── services/         # API client & file system
+├── types/        # Shared TypeScript types
+├── bin/          # CLI executable
+└── components/   # React components
 ```
 
 ## Tech Stack
@@ -84,7 +89,9 @@ Quan ly va dong bo save game tren cloud
 ### 2. Web App Setup (Local Development)
 
 ```bash
-cd web
+# Clone repository
+git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+cd choi-cung-teppy
 
 # Copy environment file
 cp .env.example .env.local
@@ -109,15 +116,12 @@ Web app chạy tại: http://localhost:3000
 ### 3. Deploy Web App lên Vercel
 
 ```bash
-# Push to GitHub
-git init
-git add .
-git commit -m "Initial commit"
+# Push to GitHub (đã có git trong web/)
 git push
 
 # Vercel Dashboard:
-# 1. Import repository
-# 2. Root Directory: web
+# 1. Import repository từ GitHub
+# 2. Không cần set Root Directory (project đã ở root)
 # 3. Add Environment Variables (same as .env.local)
 # 4. Deploy!
 ```
@@ -141,21 +145,13 @@ curl -X POST https://your-app.vercel.app/api/auth/register \
 #### Development (Local)
 
 ```bash
-cd desktop
-
-# Copy environment file
-cp .env.example .env
-
-# Set API URL
-echo "API_URL=http://localhost:3000" > .env
+# Tạo file .env trong cli/
+echo "API_URL=http://localhost:3000" > cli/.env
 # Hoặc production:
-# echo "API_URL=https://your-app.vercel.app" > .env
-
-# Install dependencies
-npm install
+# echo "API_URL=https://your-app.vercel.app" > cli/.env
 
 # Run CLI
-npm run dev
+npm run cli
 ```
 
 #### Production: Publish lên NPM
@@ -164,24 +160,28 @@ npm run dev
    ```json
    {
      "name": "@your-username/game-saver",
-     "version": "1.0.0"
+     "version": "1.0.0",
+     "private": false
    }
    ```
 
-2. **Hardcode API URL** trong `src/config.ts`:
+2. **Hardcode API URL** trong `cli/config.ts`:
    ```typescript
    export const API_URL = 'https://your-app.vercel.app';
    ```
 
-3. **Build và Publish**:
+3. **Build CLI**:
    ```bash
-   cd desktop
-   npm run build
+   npm run build:cli
+   ```
+
+4. **Publish**:
+   ```bash
    npm login
    npm publish --access public
    ```
 
-4. **User chạy**:
+5. **User chạy**:
    ```bash
    npx @your-username/game-saver
    ```
@@ -295,9 +295,9 @@ DELETE /api/saves/:id
 ### CLI không connect được API
 ```bash
 # Check API_URL
-cat desktop/.env
+cat cli/.env
 
-# hoặc hardcode trong src/config.ts
+# hoặc hardcode trong cli/config.ts
 ```
 
 ### Save file không inject được
