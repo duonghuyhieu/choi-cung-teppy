@@ -69,26 +69,26 @@ Bạn sẽ thấy menu chọn chế độ:
 Quan ly va dong bo save game tren cloud
 
 ? Chon che do:
-❯ [1] 🌐 GUI Mode - Giao dien do hoa (Web)
-  [2] ⌨️  CLI Mode - Giao dien dong lenh (Terminal)
+❯ [1] 🖥️  Giao dien (GUI) - De dung, thich hop cho nguoi moi
+  [2] ⚡ CLI - Nhanh gon cho nguoi co kinh nghiem
   [0] 🚪 Thoat
 ```
 
 **Chọn chế độ phù hợp:**
-- **[1] GUI Mode**: Giao diện đồ họa trong browser (đẹp hơn, dễ dùng hơn)
-- **[2] CLI Mode**: Giao diện terminal (nhanh, hoạt động mọi nơi)
+- **[1] Giao diện (GUI)**: Giao diện đồ họa trong browser - dễ dùng, click chuột
+- **[2] CLI**: Chạy trực tiếp trên terminal - nhanh gọn cho người có kinh nghiệm
 
 ### Bước 4: Sử dụng
 
-#### Nếu chọn GUI Mode:
+#### Nếu chọn Giao diện (GUI):
 
 1. Server sẽ khởi động tự động
 2. Browser mở tại `http://localhost:3000`
-3. Sử dụng giao diện web như website bình thường
+3. Sử dụng giao diện web như website bình thường - dễ dàng, click chuột
 
-**Lưu ý:** GUI Mode chỉ khả dụng khi bạn clone repository và chạy local dev server. Nếu chạy qua `npx`, nên chọn CLI Mode.
+**Lưu ý:** Chế độ Giao diện chỉ khả dụng khi bạn clone repository và chạy local dev server. Nếu chạy qua `npx`, hãy chọn CLI.
 
-#### Nếu chọn CLI Mode:
+#### Nếu chọn CLI:
 
 Tiếp tục với menu đăng nhập/đăng ký:
 
@@ -394,19 +394,21 @@ npm install
 npm run cli:gui
 ```
 
-### 11. Khác biệt giữa GUI Mode và CLI Mode?
+### 11. Khác biệt giữa Giao diện (GUI) và CLI?
 
-| Tính năng | GUI Mode | CLI Mode |
-|-----------|----------|----------|
-| Giao diện | Web browser (đẹp) | Terminal (text) |
-| Tốc độ | Cần khởi động server | Chạy ngay lập tức |
+| Tính năng | Giao diện (GUI) | CLI |
+|-----------|-----------------|-----|
+| Giao diện | Web browser - đẹp, dễ dùng | Terminal - text only |
+| Tốc độ | Cần khởi động server (~5s) | Chạy ngay lập tức |
 | Yêu cầu | Clone repo + npm install | Chỉ cần Node.js |
+| Sử dụng | Click chuột | Gõ lệnh |
 | Upload/Download | ✅ Có | ✅ Có |
 | Quản lý game (admin) | ✅ Có | ❌ Không |
+| Phù hợp cho | Người mới, thích giao diện đẹp | Power users, muốn nhanh |
 
 **Khuyến nghị:**
-- **GUI Mode**: Nếu bạn đã clone repo, thích UI đẹp
-- **CLI Mode**: Nếu dùng `npx`, muốn nhanh gọn
+- **Giao diện (GUI)**: Nếu bạn đã clone repo, muốn dễ dùng
+- **CLI**: Nếu dùng `npx`, muốn nhanh gọn
 
 ### 12. Tôi có thể dùng trên Linux/Mac không?
 

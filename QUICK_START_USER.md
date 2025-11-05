@@ -31,31 +31,49 @@ Bạn sẽ thấy menu chọn chế độ:
 
 ```
 ? Chon che do:
-❯ [1] 🌐 GUI Mode - Giao dien do hoa (Web)
-  [2] ⌨️  CLI Mode - Giao dien dong lenh (Terminal)
+❯ [1] 🖥️  Giao dien (GUI) - De dung, thich hop cho nguoi moi
+  [2] ⚡ CLI - Nhanh gon cho nguoi co kinh nghiem
   [0] 🚪 Thoat
 ```
 
-**Chọn [1] GUI Mode** để mở giao diện đồ họa trong browser!
-**Hoặc [2] CLI Mode** để dùng giao diện terminal.
+**Chọn [1] Giao diện (GUI)** - Giao diện đồ họa trong browser, dễ sử dụng!
+**Hoặc [2] CLI** - Nhanh gọn, chạy trực tiếp trên terminal.
 
 ---
 
-## 🌐 Sử dụng GUI Mode
+## 🖥️ Option 1: Giao diện (GUI) - Dễ dùng
 
-Nếu bạn chọn **GUI Mode**, browser sẽ tự động mở với giao diện web:
+**Ưu điểm:**
+- ✅ Giao diện đồ họa đẹp mắt, dễ nhìn
+- ✅ Click chuột thay vì gõ lệnh
+- ✅ Phù hợp cho người mới bắt đầu
+- ✅ Có đầy đủ tính năng (kể cả admin)
 
-1. ✅ Server khởi động tại `http://localhost:3000`
-2. ✅ Browser tự động mở (hoặc bạn mở thủ công)
-3. ✅ Giao diện đẹp, dễ sử dụng hơn CLI!
+**Khi chọn Giao diện:**
+1. Server tự động khởi động tại `http://localhost:3000`
+2. Browser tự động mở
+3. Sử dụng như một website bình thường
 
-**Lưu ý:** GUI Mode chỉ hoạt động khi bạn clone repository về máy và chạy local dev server.
+**Lưu ý:** Chế độ Giao diện chỉ hoạt động khi bạn **clone repository về máy**:
+```bash
+git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+cd choi-cung-teppy
+npm install
+npm run cli
+# Chọn [1] Giao diện
+```
 
 ---
 
-## ⌨️ Sử dụng CLI Mode (Terminal)
+## ⚡ Option 2: CLI - Nhanh gọn
 
-Nếu bạn chọn **CLI Mode**, tiếp tục với các bước sau:
+**Ưu điểm:**
+- ⚡ Nhanh, nhẹ, chạy ngay
+- ⚡ Không cần clone repo
+- ⚡ Phù hợp cho power users
+- ⚡ Chạy mọi nơi có Node.js
+
+**Khi chọn CLI**, tiếp tục với các bước sau:
 
 ---
 

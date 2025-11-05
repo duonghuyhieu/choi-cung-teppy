@@ -19,7 +19,7 @@ export async function startGUI() {
 ██    ██ ██   ██ ██  ██  ██ ██               ██ ██   ██  ██  ██  ██      ██   ██
  ██████  ██   ██ ██      ██ ███████     ███████ ██   ██   ████   ███████ ██   ██
 `));
-  console.log(chalk.cyan('🌐 GUI MODE - Khoi dong web server...\n'));
+  console.log(chalk.cyan('🖥️  GIAO DIEN (GUI) - Khoi dong web server...\n'));
 
   const spinner = ora('Dang khoi dong server...').start();
 
@@ -74,8 +74,8 @@ export async function startGUI() {
 
       spinner.succeed(chalk.green('Server da san sang!'));
 
-      console.log(chalk.cyan('\n✨ GUI dang chay tai: ') + chalk.yellow.bold('http://localhost:3000'));
-      console.log(chalk.gray('\n📝 Mo browser va truy cap URL tren'));
+      console.log(chalk.cyan('\n✨ Giao dien dang chay tai: ') + chalk.yellow.bold('http://localhost:3000'));
+      console.log(chalk.gray('\n📝 Mo browser va truy cap URL tren de su dung giao dien do hoa'));
       console.log(chalk.gray('⌨️  Nhan Ctrl+C de dung server\n'));
 
       // Try to open browser
@@ -86,8 +86,8 @@ export async function startGUI() {
 
     } else {
       // Production mode - user should deploy to Vercel
-      spinner.fail(chalk.red('GUI mode chi ho tro trong development'));
-      console.log(chalk.yellow('\n💡 De chay GUI:'));
+      spinner.fail(chalk.red('Giao dien (GUI) chi ho tro trong development'));
+      console.log(chalk.yellow('\n💡 De chay Giao dien (GUI):'));
       console.log(chalk.cyan('1. Clone repository: ') + chalk.gray('git clone https://github.com/duonghuyhieu/choi-cung-teppy.git'));
       console.log(chalk.cyan('2. Cai dat: ') + chalk.gray('npm install'));
       console.log(chalk.cyan('3. Chay dev server: ') + chalk.gray('npm run dev'));
@@ -100,7 +100,7 @@ export async function startGUI() {
     spinner.fail(chalk.red('Loi khi khoi dong server'));
     console.error(chalk.red(error.message));
 
-    console.log(chalk.yellow('\n💡 De su dung GUI, ban can:'));
+    console.log(chalk.yellow('\n💡 De su dung Giao dien (GUI), ban can:'));
     console.log(chalk.cyan('1. Clone repository: ') + chalk.gray('git clone https://github.com/duonghuyhieu/choi-cung-teppy.git'));
     console.log(chalk.cyan('2. Cai dat dependencies: ') + chalk.gray('cd choi-cung-teppy && npm install'));
     console.log(chalk.cyan('3. Chay dev server: ') + chalk.gray('npm run dev'));
