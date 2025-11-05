@@ -35,12 +35,25 @@ web/
 
 ---
 
+## 📚 Hướng dẫn sử dụng
+
+### 👥 Cho người dùng (End Users):
+
+- **[⚡ Quick Start Guide](./QUICK_START_USER.md)** - Bắt đầu trong 5 phút!
+- **[📖 Hướng dẫn đầy đủ](./CLI_USER_GUIDE.md)** - Hướng dẫn chi tiết từng bước
+
+### 👨‍💻 Cho Developers:
+
+Đọc tiếp phần [Setup cho Developers](#setup-cho-developers) bên dưới.
+
+---
+
 ## Cài đặt và Sử dụng
 
 ### User: Chạy CLI ngay
 
 ```bash
-npx game-saver
+npx @duonghuyhieu/game-saver
 ```
 
 **Giao diện CLI sẽ hiện ngay trong terminal của bạn!**
