@@ -53,10 +53,16 @@ web/
 ### Người dùng: Chạy CLI ngay
 
 ```bash
-npx @duonghuyhieu/game-saver
+# Clone repository
+git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+cd choi-cung-teppy
+
+# Install và chạy CLI
+npm install
+npm run cli
 ```
 
-**CLI sẽ chạy ngay trong terminal - không cần cài đặt!**
+**CLI sẽ chạy ngay trong terminal!**
 
 ```
  ██████   █████  ███    ███ ███████     ███████  █████  ██    ██ ███████ ██████
@@ -214,11 +220,17 @@ npm run cli
 
 ### CLI Tool (User)
 
-1. **Chạy**: `npx game-saver` (hoặc `npx @your-username/game-saver`)
-2. **Đăng ký/Đăng nhập**
-3. **Chọn game** từ danh sách
-4. **Xem download links** để tải game
-5. **Quản lý save**:
+1. **Clone và cài đặt**:
+   ```bash
+   git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+   cd choi-cung-teppy
+   npm install
+   ```
+2. **Chạy CLI**: `npm run cli`
+3. **Đăng ký/Đăng nhập**
+4. **Chọn game** từ danh sách
+5. **Xem download links** để tải game
+6. **Quản lý save**:
    - **Upload**: Tự động extract từ game folder → upload cloud
    - **Download**: Tự động download → inject vào game folder
 

@@ -30,13 +30,16 @@
 
 ## 📥 Cài đặt
 
-**KHÔNG CẦN CÀI ĐẶT!** Bạn chỉ cần chạy lệnh sau:
-
 ```bash
-npx @duonghuyhieu/game-saver
+# Clone repository
+git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+cd choi-cung-teppy
+
+# Install dependencies
+npm install
 ```
 
-> **Lưu ý:** Lần đầu chạy sẽ tải về CLI tool (~5-10MB), các lần sau sẽ chạy ngay lập tức.
+> **Lưu ý:** Chỉ cần cài đặt một lần, các lần sau chỉ cần chạy `npm run cli`
 
 ---
 
@@ -52,7 +55,7 @@ npx @duonghuyhieu/game-saver
 ### Bước 2: Chạy CLI
 
 ```bash
-npx @duonghuyhieu/game-saver
+npm run cli
 ```
 
 ### Bước 3: Giao diện CLI sẽ hiện ra
@@ -125,7 +128,11 @@ Dùng **mũi tên ↑↓** để di chuyển, nhấn **Enter** để chọn.
 CLI sẽ **tự động nhớ** phiên đăng nhập của bạn! Chỉ cần chạy lại:
 
 ```bash
-npx @duonghuyhieu/game-saver
+# Di chuyển vào thư mục (nếu chưa ở trong đó)
+cd choi-cung-teppy
+
+# Chạy CLI
+npm run cli
 ```
 
 Sẽ vào thẳng màn hình chọn game, không cần đăng nhập lại.
