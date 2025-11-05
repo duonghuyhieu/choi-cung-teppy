@@ -46,22 +46,29 @@ export default function HelpDialog() {
                 </div>
               </section>
 
-              {/* Section 2: Sử dụng Desktop App */}
+              {/* Section 2: Sử dụng CLI Tool */}
               <section>
-                <h3 className="text-xl font-bold mb-3 text-blue-400">2. Sử dụng Desktop App</h3>
+                <h3 className="text-xl font-bold mb-3 text-blue-400">2. Quản lý Save Game với CLI</h3>
                 <div className="bg-gray-700/50 rounded-lg p-4 space-y-3">
-                  <p className="font-semibold">Bước 1: Cài đặt</p>
-                  <div className="bg-gray-900 rounded px-3 py-2 font-mono text-sm text-green-400">
-                    npx game-saver
+                  <p className="font-semibold">Cách 1: PowerShell (1 lệnh)</p>
+                  <div className="bg-gray-900 rounded px-3 py-2 font-mono text-xs text-green-400 overflow-x-auto">
+                    irm https://raw.githubusercontent.com/duonghuyhieu/choi-cung-teppy/main/install.bat | iex
                   </div>
-                  <p className="text-sm text-gray-400">* Yêu cầu: Node.js 16+ đã cài đặt</p>
 
-                  <p className="font-semibold mt-4">Bước 2: Sử dụng GUI</p>
-                  <p>• Ứng dụng sẽ mở giao diện đồ họa</p>
+                  <p className="font-semibold mt-3">Cách 2: Command Prompt (copy & paste từng dòng)</p>
+                  <div className="bg-gray-900 rounded px-3 py-2 font-mono text-xs text-green-400 space-y-1">
+                    <div>git clone https://github.com/duonghuyhieu/choi-cung-teppy.git</div>
+                    <div>cd choi-cung-teppy && npm install && npm run cli</div>
+                  </div>
+
+                  <p className="text-sm text-gray-400">* Yêu cầu: Node.js 16+ và Git đã cài đặt</p>
+
+                  <p className="font-semibold mt-4">CLI sẽ giúp bạn:</p>
+                  <p>• Đăng nhập/đăng ký tài khoản</p>
                   <p>• Chọn game từ danh sách</p>
                   <p>• Upload save file của bạn lên cloud</p>
-                  <p>• Hoặc download save file public về máy</p>
-                  <p>• Save sẽ tự động sync vào đúng thư mục game</p>
+                  <p>• Download save file (public hoặc của bạn) về máy</p>
+                  <p>• Save tự động được đồng bộ vào đúng thư mục game</p>
                 </div>
               </section>
 
@@ -80,9 +87,8 @@ export default function HelpDialog() {
               <section>
                 <h3 className="text-xl font-bold mb-3 text-blue-400">4. Đồng bộ giữa nhiều máy</h3>
                 <div className="bg-gray-700/50 rounded-lg p-4 space-y-2">
-                  <p>• Chạy <code className="bg-gray-900 px-2 py-1 rounded">npx game-saver</code> trên máy thứ nhất</p>
-                  <p>• Upload save file lên cloud</p>
-                  <p>• Chạy <code className="bg-gray-900 px-2 py-1 rounded">npx game-saver</code> trên máy thứ hai</p>
+                  <p>• Chạy CLI trên máy thứ nhất và upload save lên cloud</p>
+                  <p>• Chạy CLI trên máy thứ hai</p>
                   <p>• Download save file về để tiếp tục chơi</p>
                   <p>• Save sẽ được tự động ghi vào đúng thư mục game</p>
                 </div>

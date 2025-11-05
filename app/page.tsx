@@ -31,22 +31,9 @@ export default function Home() {
         {/* Header */}
         <header className="text-center mb-16">
           <h1 className="text-6xl font-bold mb-4">Game Saver</h1>
-          <p className="text-xl text-gray-300 mb-8">
+          <p className="text-xl text-gray-300">
             Tải game và quản lý save game của bạn
           </p>
-
-          {/* CLI Quick Start */}
-          <div className="max-w-2xl mx-auto bg-blue-500/10 border border-blue-500 rounded-lg p-6 text-left">
-            <h3 className="text-lg font-bold text-blue-400 mb-3">⚡ Quản lý Save Game với CLI</h3>
-            <p className="text-sm text-gray-300 mb-3">
-              Backup và đồng bộ save game lên cloud:
-            </p>
-            <div className="bg-gray-900 rounded-lg p-3 space-y-1">
-              <code className="block text-xs text-green-400">git clone https://github.com/duonghuyhieu/choi-cung-teppy.git</code>
-              <code className="block text-xs text-green-400">cd choi-cung-teppy</code>
-              <code className="block text-xs text-green-400">npm install && npm run cli</code>
-            </div>
-          </div>
         </header>
 
         {/* Games Section */}
