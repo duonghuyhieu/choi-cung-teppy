@@ -54,7 +54,7 @@ export default function AdminPage() {
 
   console.log('Admin page - user:', user);
   console.log('Admin page - authLoading:', authLoading);
-  console.log('Admin page - token in localStorage:', localStorage.getItem('auth-token'));
+  console.log('Admin page - token in localStorage:', typeof window !== 'undefined' ? localStorage.getItem('auth-token') : 'N/A (server)');
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit' | 'view'>('create');

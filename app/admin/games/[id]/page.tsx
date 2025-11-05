@@ -57,6 +57,7 @@ export default function ManageGamePage() {
   const [linkFormData, setLinkFormData] = useState({
     title: '',
     url: '',
+    platform: 'PC', // Default platform
   });
   const [error, setError] = useState('');
 
@@ -71,7 +72,7 @@ export default function ManageGamePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['game', gameId] });
       setShowAddLink(false);
-      setLinkFormData({ title: '', url: '' });
+      setLinkFormData({ title: '', url: '', platform: 'PC' });
       setError('');
     },
     onError: (err: Error) => {
@@ -189,19 +190,37 @@ export default function ManageGamePage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Tên Link <span className="text-red-500">*</span>
+                    Tên Link
                   </label>
                   <input
                     type="text"
                     value={linkFormData.title}
                     onChange={(e) => setLinkFormData({ ...linkFormData, title: e.target.value })}
-                    required
                     placeholder="Part 1, Part 2, Main Game..."
                     className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg focus:outline-none focus:border-blue-500"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Platform <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={linkFormData.platform}
+                    onChange={(e) => setLinkFormData({ ...linkFormData, platform: e.target.value })}
+                    required
+                    className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="PC">PC</option>
+                    <option value="Steam">Steam</option>
+                    <option value="GOG">GOG</option>
+                    <option value="Epic">Epic Games</option>
+                    <option value="Torrent">Torrent</option>
+                    <option value="Other">Khác</option>
+                  </select>
                 </div>
 
                 <div>

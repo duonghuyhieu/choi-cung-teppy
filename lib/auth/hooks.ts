@@ -6,6 +6,13 @@ import { User, LoginDto, CreateUserDto, ApiResponse, AuthResponse } from '@/type
 // Fetch current user
 async function fetchCurrentUser(): Promise<User | null> {
   console.log('[fetchCurrentUser] Starting...');
+
+  // Check if running in browser
+  if (typeof window === 'undefined') {
+    console.log('[fetchCurrentUser] Running on server, returning null');
+    return null;
+  }
+
   const token = localStorage.getItem('auth-token');
   console.log('[fetchCurrentUser] Token from localStorage:', token ? 'exists' : 'missing');
 
@@ -113,7 +120,9 @@ export function useAuth() {
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      localStorage.removeItem('auth-token');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth-token');
+      }
       queryClient.setQueryData(['currentUser'], null);
       queryClient.clear();
     },

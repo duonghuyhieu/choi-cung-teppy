@@ -36,8 +36,10 @@ export default function LoginPage() {
 
       // Save token to localStorage
       if (data.data?.token && data.data?.user) {
-        localStorage.setItem('auth-token', data.data.token);
-        console.log('Token saved to localStorage:', localStorage.getItem('auth-token'));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth-token', data.data.token);
+          console.log('Token saved to localStorage:', localStorage.getItem('auth-token'));
+        }
 
         // Set user data to React Query cache BEFORE redirect
         queryClient.setQueryData(['currentUser'], data.data.user);

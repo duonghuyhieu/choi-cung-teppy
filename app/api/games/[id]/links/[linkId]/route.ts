@@ -5,10 +5,10 @@ import { ApiResponse } from '@/types';
 // DELETE /api/games/[id]/links/[linkId] - Delete a download link
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; linkId: string } }
+  { params }: { params: Promise<{ id: string; linkId: string }> }
 ) {
   try {
-    const { linkId } = params;
+    const { linkId } = await params;
 
     const { error } = await supabaseAdmin
       .from('download_links')

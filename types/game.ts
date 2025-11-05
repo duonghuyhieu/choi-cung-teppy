@@ -38,8 +38,11 @@ export interface DownloadLink {
 
 export interface CreateDownloadLinkDto {
   game_id: string;
-  title: string;
+  title?: string;
   url: string;
+  platform: string;
+  version?: string | null;
+  file_size?: string | number | null;
 }
 
 export interface GameWithLinks extends Game {
