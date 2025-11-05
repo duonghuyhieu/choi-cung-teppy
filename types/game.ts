@@ -28,9 +28,11 @@ export interface UpdateGameDto {
 export interface DownloadLink {
   id: string;
   game_id: string;
-  title: string; // e.g., "Part 1", "Part 2", "Main Game"
+  title?: string; // e.g., "Part 1", "Part 2", "Main Game"
   url: string;
-  file_size: string | null; // e.g., "2.5 GB"
+  platform: string; // e.g., "PC", "Steam", "GOG"
+  version: string | null; // e.g., "1.0.0"
+  file_size: string | number | null; // e.g., "2.5 GB" or number in bytes
   created_at: string;
 }
 

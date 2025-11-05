@@ -57,9 +57,10 @@ class ApiClient {
     });
 
     if (response.data.success && response.data.data.token) {
-      this.token = response.data.data.token;
-      await this.saveToken(this.token);
-      this.setAuthHeader(this.token);
+      const token = response.data.data.token;
+      this.token = token;
+      await this.saveToken(token);
+      this.setAuthHeader(token);
     }
 
     return response.data;
@@ -73,9 +74,10 @@ class ApiClient {
     });
 
     if (response.data.success && response.data.data.token) {
-      this.token = response.data.data.token;
-      await this.saveToken(this.token);
-      this.setAuthHeader(this.token);
+      const token = response.data.data.token;
+      this.token = token;
+      await this.saveToken(token);
+      this.setAuthHeader(token);
     }
 
     return response.data;

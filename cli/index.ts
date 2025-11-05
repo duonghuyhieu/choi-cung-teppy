@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { apiClient } from './services/api.js';
 import { fileSystem } from './services/fileSystem.js';
-import type { User, Game, SaveFileWithUser, GameWithLinks } from './types.js';
+import type { User, Game, SaveFileWithUser, GameWithLinks } from '../types/index.js';
 
 let currentUser: User | null = null;
 

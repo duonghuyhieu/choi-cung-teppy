@@ -1,21 +1,49 @@
 {
-  "name": "game-saver-monorepo",
-  "version": "1.0.0",
+  "name": "web",
+  "version": "0.1.0",
   "private": true,
-  "description": "Game save manager with web admin and desktop GUI",
-  "scripts": {
-    "web:dev": "cd web && npm run dev",
-    "web:build": "cd web && npm run build",
-    "desktop:dev": "cd desktop && npm run dev",
-    "desktop:build": "cd desktop && npm run electron:build",
-    "install:all": "npm install && cd web && npm install && cd ../desktop && npm install"
+  "type": "module",
+  "bin": {
+    "game-saver": "./bin/cli.js"
   },
-  "keywords": [
-    "game",
-    "save",
-    "backup",
-    "cloud"
-  ],
-  "author": "",
-  "license": "MIT"
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:cli": "tsc -p tsconfig.cli.json",
+    "start": "next start",
+    "lint": "eslint",
+    "cli": "tsx ./cli/index.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.79.0",
+    "@tanstack/react-query": "^5.90.6",
+    "axios": "^1.6.2",
+    "bcryptjs": "^3.0.3",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.3.1",
+    "form-data": "^4.0.0",
+    "inquirer": "^9.2.12",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.552.0",
+    "next": "16.0.1",
+    "ora": "^8.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/inquirer": "^9.0.7",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.7.0",
+    "typescript": "^5"
+  }
 }
