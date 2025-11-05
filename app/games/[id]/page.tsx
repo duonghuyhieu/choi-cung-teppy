@@ -124,11 +124,29 @@ export default function GameDetailPage() {
               </div>
             </div>
 
-            {/* Additional Info */}
-            <div className="bg-blue-500/10 border border-blue-500 text-blue-400 px-4 py-3 rounded-lg">
-              <p className="text-sm">
-                <strong>Lưu ý:</strong> Sau khi tải game, bạn có thể sử dụng ứng dụng Desktop (npx game-saver)
-                để quản lý và đồng bộ save game.
+            {/* CLI Usage Guide */}
+            <div className="bg-blue-500/10 border border-blue-500 rounded-lg p-6 space-y-4">
+              <h3 className="text-lg font-bold text-blue-400">🎮 Quản lý Save Game với CLI</h3>
+
+              <p className="text-sm text-gray-300">
+                Sau khi tải game, dùng CLI để backup và đồng bộ save game lên cloud:
+              </p>
+
+              <div className="bg-gray-900 rounded-lg p-4 space-y-2">
+                <p className="text-xs text-gray-400 mb-2">Chạy các lệnh sau trong Command Prompt:</p>
+                <code className="block text-sm text-green-400">
+                  git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
+                </code>
+                <code className="block text-sm text-green-400">
+                  cd choi-cung-teppy
+                </code>
+                <code className="block text-sm text-green-400">
+                  npm install && npm run cli
+                </code>
+              </div>
+
+              <p className="text-xs text-gray-400">
+                CLI sẽ giúp bạn upload/download save file, đồng bộ giữa nhiều máy tính.
               </p>
             </div>
           </div>
