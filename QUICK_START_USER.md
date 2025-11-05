@@ -22,13 +22,7 @@ node -v
 Mở **Command Prompt** (Win + R → gõ `cmd`) và chạy:
 
 ```bash
-# Clone repository
-git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
-cd choi-cung-teppy
-
-# Install và chạy CLI
-npm install
-npm run cli
+npx @duonghuyhieu/game-saver
 ```
 
 > Lần đầu sẽ tải về ~5MB, các lần sau chạy ngay!

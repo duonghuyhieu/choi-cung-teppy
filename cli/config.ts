@@ -4,7 +4,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // API Configuration
+// TODO: Update this URL after deploying web app to production
+// Example: 'https://your-app.vercel.app'
 export const API_URL = process.env.API_URL || 'http://localhost:3000';
+
+// For production NPM package, hardcode your production URL here:
+// export const API_URL = 'https://your-app.vercel.app';
 
 export const API_ENDPOINTS = {
   // Auth

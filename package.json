@@ -1,7 +1,15 @@
 {
-  "name": "web",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@duonghuyhieu/game-saver",
+  "version": "1.0.0",
+  "private": false,
+  "description": "CLI tool to backup and sync game saves to cloud",
+  "author": "Duong Huy Hieu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duonghuyhieu/choi-cung-teppy.git"
+  },
+  "keywords": ["game", "save", "backup", "cli", "cloud"],
   "type": "module",
   "bin": {
     "game-saver": "./bin/cli.js"

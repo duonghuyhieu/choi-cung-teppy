@@ -53,16 +53,10 @@ web/
 ### Người dùng: Chạy CLI ngay
 
 ```bash
-# Clone repository
-git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
-cd choi-cung-teppy
-
-# Install và chạy CLI
-npm install
-npm run cli
+npx @duonghuyhieu/game-saver
 ```
 
-**CLI sẽ chạy ngay trong terminal!**
+**CLI sẽ chạy ngay trong terminal - không cần cài đặt!**
 
 ```
  ██████   █████  ███    ███ ███████     ███████  █████  ██    ██ ███████ ██████
@@ -175,35 +169,14 @@ npm run cli
 
 #### Production: Publish lên NPM
 
-1. **Update package.json**:
-   ```json
-   {
-     "name": "@your-username/game-saver",
-     "version": "1.0.0",
-     "private": false
-   }
-   ```
+**Package đã được chuẩn bị sẵn!** Xem hướng dẫn chi tiết tại [PUBLISH_NPM.md](./PUBLISH_NPM.md)
 
-2. **Hardcode API URL** trong `cli/config.ts`:
-   ```typescript
-   export const API_URL = 'https://your-app.vercel.app';
-   ```
-
-3. **Build CLI**:
-   ```bash
-   npm run build:cli
-   ```
-
-4. **Publish**:
-   ```bash
-   npm login
-   npm publish --access public
-   ```
-
-5. **User chạy**:
-   ```bash
-   npx @your-username/game-saver
-   ```
+Tóm tắt các bước:
+1. Deploy web app lên Vercel
+2. Update production URL trong `cli/config.ts`
+3. Build: `npm run build:cli`
+4. Publish: `npm publish --access public`
+5. User chạy: `npx @duonghuyhieu/game-saver`
 
 ---
 
@@ -220,17 +193,11 @@ npm run cli
 
 ### CLI Tool (User)
 
-1. **Clone và cài đặt**:
-   ```bash
-   git clone https://github.com/duonghuyhieu/choi-cung-teppy.git
-   cd choi-cung-teppy
-   npm install
-   ```
-2. **Chạy CLI**: `npm run cli`
-3. **Đăng ký/Đăng nhập**
-4. **Chọn game** từ danh sách
-5. **Xem download links** để tải game
-6. **Quản lý save**:
+1. **Chạy CLI**: `npx @duonghuyhieu/game-saver`
+2. **Đăng ký/Đăng nhập**
+3. **Chọn game** từ danh sách
+4. **Xem download links** để tải game
+5. **Quản lý save**:
    - **Upload**: Tự động extract từ game folder → upload cloud
    - **Download**: Tự động download → inject vào game folder
 
