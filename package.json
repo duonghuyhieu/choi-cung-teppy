@@ -1,0 +1,21 @@
+{
+  "name": "game-saver-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Game save manager with web admin and desktop GUI",
+  "scripts": {
+    "web:dev": "cd web && npm run dev",
+    "web:build": "cd web && npm run build",
+    "desktop:dev": "cd desktop && npm run dev",
+    "desktop:build": "cd desktop && npm run electron:build",
+    "install:all": "npm install && cd web && npm install && cd ../desktop && npm install"
+  },
+  "keywords": [
+    "game",
+    "save",
+    "backup",
+    "cloud"
+  ],
+  "author": "",
+  "license": "MIT"
+}
