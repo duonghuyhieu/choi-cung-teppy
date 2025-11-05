@@ -10,6 +10,14 @@
     "url": "https://github.com/duonghuyhieu/choi-cung-teppy.git"
   },
   "keywords": ["game", "save", "backup", "cli", "cloud"],
+  "files": [
+    "bin/",
+    "dist/cli/",
+    "dist/types/",
+    "README.md",
+    "QUICK_START_USER.md",
+    "CLI_USER_GUIDE.md"
+  ],
   "type": "module",
   "bin": {
     "game-saver": "./bin/cli.js"
@@ -18,6 +26,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:cli": "tsc -p tsconfig.cli.json",
+    "prepublishOnly": "npm run build:cli",
     "start": "next start",
     "lint": "eslint",
     "cli": "tsx ./cli/index.ts"

@@ -1,0 +1,48 @@
+# Source files (only publish compiled dist/)
+cli/
+types/
+
+# Next.js web app files
+app/
+components/
+lib/
+public/
+.next/
+*.next
+
+# Config files
+.env
+.env.local
+.env.*
+tsconfig.json
+tsconfig.cli.json
+tailwind.config.ts
+postcss.config.mjs
+next.config.ts
+eslint.config.mjs
+
+# Development files
+.git/
+.gitignore
+.claude/
+.mcp.json
+node_modules/
+*.log
+*.tsbuildinfo
+dist/*.tsbuildinfo
+dist/**/*.tsbuildinfo
+
+# Documentation for developers only
+PUBLISH_NPM.md
+supabase-schema.sql
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+__tests__/
+*.test.ts
+*.spec.ts
