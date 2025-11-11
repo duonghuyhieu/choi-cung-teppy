@@ -207,10 +207,30 @@ CREATE POLICY "Admins can manage all saves" ON save_files
   );
 
 -- ============================================
--- 8. STORAGE BUCKET (Run in Storage section)
+-- 8. STORAGE BUCKET & POLICIES
 -- ============================================
--- Tạo bucket 'save-files' trong Supabase Storage Dashboard
--- Sau đó chạy policies sau trong SQL Editor:
+-- STEP 1: Tạo bucket 'save-files' trong Supabase Storage Dashboard
+--         - Vào Storage → New bucket
+--         - Name: save-files
+--         - Public: false (để dùng signed URLs)
+--
+-- STEP 2: Chạy policies sau trong SQL Editor:
+
+-- Enable RLS on storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Allow service role to upload/manage files
+CREATE POLICY "Service role can manage save-files" ON storage.objects
+  FOR ALL
+  TO service_role
+  USING (bucket_id = 'save-files')
+  WITH CHECK (bucket_id = 'save-files');
+
+-- Allow public to view files (for downloads)
+CREATE POLICY "Public can view save-files" ON storage.objects
+  FOR SELECT
+  TO public
+  USING (bucket_id = 'save-files');
 
 -- Storage policies
 INSERT INTO storage.buckets (id, name, public)

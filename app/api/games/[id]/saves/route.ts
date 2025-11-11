@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSaveFilesByGame, createSaveFile } from '@/lib/db/saves';
-import { uploadFile } from '@/lib/storage/files';
+import { getSaveFilesByGame, upsertSaveFile } from '@/lib/db/saves';
+import { uploadFile, deleteFile } from '@/lib/storage/files';
 import { requireAuth, getSession } from '@/lib/auth/session';
 import { ApiResponse, SaveFileWithUser, SaveFile } from '@/types';
 
@@ -71,8 +71,8 @@ export async function POST(
       gameId
     );
 
-    // Create save file record
-    const saveFile = await createSaveFile(
+    // Upsert save file record (update if exists, create if not)
+    const { saveFile, isUpdate, oldFileUrl } = await upsertSaveFile(
       {
         game_id: gameId,
         file_name: fileName,
@@ -84,13 +84,25 @@ export async function POST(
       fileSize
     );
 
+    // If updated, delete old file from storage
+    if (isUpdate && oldFileUrl && oldFileUrl !== fileUrl) {
+      try {
+        await deleteFile(oldFileUrl);
+      } catch (error) {
+        console.error('Failed to delete old file:', error);
+        // Don't fail the request if old file deletion fails
+      }
+    }
+
     return NextResponse.json<ApiResponse<SaveFile>>(
       {
         success: true,
         data: saveFile,
-        message: 'Save file uploaded successfully',
+        message: isUpdate
+          ? 'Save file updated successfully'
+          : 'Save file uploaded successfully',
       },
-      { status: 201 }
+      { status: isUpdate ? 200 : 201 }
     );
   } catch (error: any) {
     console.error('Upload save file error:', error);

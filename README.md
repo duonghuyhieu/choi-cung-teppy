@@ -144,7 +144,7 @@ cp .env.example .env.local
 # Chỉnh sửa .env.local với Supabase credentials
 # NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
 # NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
-# SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
+# SUPABASE_SERVICE_ROLE_KEY=eyJhbG...  ⚠️ QUAN TRỌNG: Cần thiết để upload files!
 # JWT_SECRET=your-random-secret-key
 
 # Install dependencies
@@ -174,12 +174,13 @@ git push
    ```
    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
-   SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
+   SUPABASE_SERVICE_ROLE_KEY=eyJhbG...  👈 QUAN TRỌNG!
    JWT_SECRET=your-random-secret-key
    ```
 
-   **Lưu ý:**
+   **⚠️ Lưu ý:**
    - Phải thêm **TẤT CẢ** các biến này trước khi deploy
+   - **SUPABASE_SERVICE_ROLE_KEY** cần thiết để upload files! Lấy từ Settings → API → service_role key
    - Copy từ file `.env.local` của bạn
    - Không bỏ sót biến nào, nếu không build sẽ bị lỗi!
 
@@ -379,9 +380,20 @@ cat cli/.env
 - Kiểm tra path template có đúng không
 - Chạy CLI với quyền Administrator (nếu cần write vào Program Files)
 
-### Upload save lỗi
-- Kiểm tra file tồn tại: path template có resolve được không
-- Check file size < 50MB
+### Upload save lỗi "new row violates row-level security policy"
+**Nguyên nhân**: Service Role Key chưa được cấu hình
+
+**Giải pháp**: Xem chi tiết tại [FIX_UPLOAD_ERROR.md](./FIX_UPLOAD_ERROR.md)
+
+Tóm tắt:
+1. Lấy Service Role Key từ Supabase Dashboard (Settings → API)
+2. Thêm vào .env.local: `SUPABASE_SERVICE_ROLE_KEY=eyJhbG...`
+3. Chạy storage policies SQL (xem FIX_UPLOAD_ERROR.md)
+4. Restart server
+
+### Upload save lỗi khác
+- Kiểm tra file size < 50MB
+- Kiểm tra bucket 'save-files' đã được tạo chưa
 
 ---
 

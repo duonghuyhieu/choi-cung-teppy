@@ -6,6 +6,27 @@ import {
   SaveFileWithUser,
 } from '@/types';
 
+// Check if save file with same name exists for user
+export async function getSaveFileByName(
+  gameId: string,
+  userId: string,
+  fileName: string
+): Promise<SaveFile | null> {
+  const { data, error } = await supabaseAdmin
+    .from('save_files')
+    .select('*')
+    .eq('game_id', gameId)
+    .eq('user_id', userId)
+    .eq('file_name', fileName)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 export async function createSaveFile(
   data: CreateSaveFileDto,
   userId: string,
@@ -31,6 +52,54 @@ export async function createSaveFile(
   }
 
   return saveFile;
+}
+
+// Upsert: Update if exists, create if not
+export async function upsertSaveFile(
+  data: CreateSaveFileDto,
+  userId: string,
+  fileUrl: string,
+  fileSize: number
+): Promise<{ saveFile: SaveFile; isUpdate: boolean; oldFileUrl?: string }> {
+  // Check if file already exists
+  const existingFile = await getSaveFileByName(
+    data.game_id,
+    userId,
+    data.file_name
+  );
+
+  if (existingFile) {
+    // Update existing record
+    const { data: saveFile, error } = await supabaseAdmin
+      .from('save_files')
+      .update({
+        file_url: fileUrl,
+        file_size: fileSize,
+        description: data.description,
+        is_public: data.is_public || false,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existingFile.id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      saveFile,
+      isUpdate: true,
+      oldFileUrl: existingFile.file_url,
+    };
+  } else {
+    // Create new record
+    const saveFile = await createSaveFile(data, userId, fileUrl, fileSize);
+    return {
+      saveFile,
+      isUpdate: false,
+    };
+  }
 }
 
 export async function getSaveFilesByGame(

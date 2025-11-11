@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { GameWithLinks, ApiResponse } from '@/types';
 import Navigation from '@/components/Navigation';
+import UploadSaveModal from '@/components/UploadSaveModal';
+import { useAuth } from '@/lib/auth/hooks';
 
 interface SaveFileWithUser {
   id: string;
@@ -48,6 +50,8 @@ export default function GameDetailPage() {
   const params = useParams();
   const gameId = params.id as string;
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const { user } = useAuth();
 
   const { data: game, isLoading, error } = useQuery({
     queryKey: ['game', gameId],
@@ -184,7 +188,17 @@ export default function GameDetailPage() {
 
                 {/* Save Files Section */}
                 <div className="mt-8">
-                  <h2 className="text-2xl font-bold mb-4">Save Files Công Khai</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold">Save Files Công Khai</h2>
+                    {user && (
+                      <button
+                        onClick={() => setIsUploadModalOpen(true)}
+                        className="px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:scale-[1.02] active:scale-95"
+                      >
+                        📤 Upload Save
+                      </button>
+                    )}
+                  </div>
 
                   {savesLoading ? (
                     <div className="bg-gray-700/50 rounded-lg p-6 text-center">
@@ -244,15 +258,32 @@ export default function GameDetailPage() {
               </div>
             </div>
 
-            {/* CLI Info */}
-            <div className="bg-blue-500/10 border border-blue-500 text-blue-400 px-4 py-3 rounded-lg">
-              <p className="text-sm">
-                <strong>💡 Mẹo:</strong> Sau khi tải game, click nút "Hướng dẫn" ở góc trên để xem cách quản lý save game với CLI.
-              </p>
+            {/* Info Boxes */}
+            <div className="space-y-4">
+              {user && (
+                <div className="bg-[var(--neon-cyan)]/10 border border-[var(--neon-cyan)] text-[var(--neon-cyan)] px-4 py-3 rounded-lg">
+                  <p className="text-sm">
+                    <strong>📤 Upload Save:</strong> Click nút "Upload Save" ở trên để đẩy save file lên cloud. Chọn "Công khai" để chia sẻ với mọi người!
+                  </p>
+                </div>
+              )}
+              <div className="bg-blue-500/10 border border-blue-500 text-blue-400 px-4 py-3 rounded-lg">
+                <p className="text-sm">
+                  <strong>💡 CLI Tool:</strong> Sử dụng CLI để tự động đồng bộ save giữa các thiết bị. Click "Hướng dẫn" ở góc trên để xem cách dùng.
+                </p>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Upload Save Modal */}
+      <UploadSaveModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        gameId={gameId}
+        gameName={game?.name || ''}
+      />
     </div>
   );
 }
