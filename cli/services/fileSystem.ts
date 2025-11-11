@@ -33,7 +33,7 @@ export class FileSystemService {
           resolvedPath = path.join(dirPath, matchedFile);
         }
       } catch (error) {
-        console.error('Error resolving path:', error);
+        // Directory doesn't exist, leave path as is
       }
     }
 
@@ -85,21 +85,14 @@ export class FileSystemService {
     downloadUrl: string,
     gamePathTemplate: string
   ): Promise<void> {
-    try {
-      // 1. Download file from API
-      const fileData = await apiClient.downloadFile(downloadUrl);
+    // 1. Download file from API
+    const fileData = await apiClient.downloadFile(downloadUrl);
 
-      // 2. Resolve game path
-      const resolvedPath = await this.resolvePath(gamePathTemplate);
+    // 2. Resolve game path
+    const resolvedPath = await this.resolvePath(gamePathTemplate);
 
-      // 3. Write file
-      await this.writeFile(resolvedPath, fileData);
-
-      console.log(`✓ Save file injected successfully to: ${resolvedPath}`);
-    } catch (error: any) {
-      console.error('Failed to inject save file:', error);
-      throw new Error(`Failed to inject save file: ${error.message}`);
-    }
+    // 3. Write file
+    await this.writeFile(resolvedPath, fileData);
   }
 
   /**
@@ -109,28 +102,22 @@ export class FileSystemService {
     buffer: Buffer;
     fileName: string;
   }> {
-    try {
-      // 1. Resolve game path
-      const resolvedPath = await this.resolvePath(gamePathTemplate);
+    // 1. Resolve game path
+    const resolvedPath = await this.resolvePath(gamePathTemplate);
 
-      // 2. Check if file exists
-      const exists = await this.fileExists(resolvedPath);
-      if (!exists) {
-        throw new Error(`Save file not found at: ${resolvedPath}`);
-      }
-
-      // 3. Read file
-      const buffer = await this.readFile(resolvedPath);
-
-      // 4. Get filename from path
-      const fileName = path.basename(resolvedPath);
-
-      console.log(`✓ Save file extracted successfully from: ${resolvedPath}`);
-      return { buffer, fileName };
-    } catch (error: any) {
-      console.error('Failed to extract save file:', error);
-      throw new Error(`Failed to extract save file: ${error.message}`);
+    // 2. Check if file exists
+    const exists = await this.fileExists(resolvedPath);
+    if (!exists) {
+      throw new Error('SAVE_NOT_FOUND');
     }
+
+    // 3. Read file
+    const buffer = await this.readFile(resolvedPath);
+
+    // 4. Get filename from path
+    const fileName = path.basename(resolvedPath);
+
+    return { buffer, fileName };
   }
 }
 

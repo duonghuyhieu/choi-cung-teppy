@@ -9,12 +9,14 @@ Hệ thống quản lý và đồng bộ save game trên cloud. Gồm web app (a
 
 ## Tính năng
 
+- 🎮 **Xem danh sách game** - không cần đăng nhập
+- 📥 **Tải game** - link tự động mở trong browser
 - 💾 **Backup save game** lên cloud (Supabase Storage)
 - 🔄 **Đồng bộ** save game giữa nhiều thiết bị
-- 📥 **Download save public** do admin chia sẻ
+- ☁️ **Download save public** do admin chia sẻ
 - ⚡ **Tự động inject** save vào thư mục game
-- 🎮 **Quản lý games** và download links (admin)
 - 🖥️ **CLI thuần túy** - chạy ngay trong terminal, không cần mở app riêng
+- 🌐 **Web Portal** - quản lý saves, tải save trực tiếp trên web
 
 ## Kiến trúc
 
@@ -73,10 +75,35 @@ npx @duonghuyhieu/game-saver
 Quan ly va dong bo save game tren cloud
 
 ? Chon hanh dong: (Use arrow keys)
-❯ [1] Dang nhap
-  [2] Dang ky
+❯ [1] Chon game
+  [2] Dang nhap
+  [3] Dang ky
   [0] Thoat
 ```
+
+### Quy trình sử dụng CLI
+
+#### Lần đầu sử dụng:
+1. Chạy: `npx @duonghuyhieu/game-saver`
+2. Chọn **"[1] Chon game"** để xem danh sách
+3. Chọn game bạn muốn chơi
+4. Chọn **"[1] Tai game"** để mở link download
+5. Sau khi tải và cài game, quay lại CLI
+6. Chọn **"[2] Dang nhap"** hoặc **"[3] Dang ky"**
+7. Chọn **"[2] Lay file save"** để tải save public của admin (full progress!)
+
+#### Backup save của bạn:
+1. Chơi game và có progress
+2. Chạy CLI và đăng nhập
+3. Chọn game → **"[3] Tai len file save"**
+4. Save tự động đọc từ thư mục game và upload lên cloud
+
+#### Đồng bộ sang máy khác:
+1. Chạy CLI trên máy mới
+2. Đăng nhập cùng tài khoản
+3. Chọn game → **"[2] Lay file save"**
+4. Chọn save của bạn từ danh sách
+5. Save tự động ghi vào thư mục game!
 
 ---
 
@@ -223,12 +250,16 @@ Tóm tắt các bước:
 ### CLI Tool (User)
 
 1. **Chạy CLI**: `npx @duonghuyhieu/game-saver`
-2. **Đăng ký/Đăng nhập**
-3. **Chọn game** từ danh sách
-4. **Xem download links** để tải game
-5. **Quản lý save**:
-   - **Upload**: Tự động extract từ game folder → upload cloud
-   - **Download**: Tự động download → inject vào game folder
+2. **Chọn game** từ danh sách (không cần đăng nhập!)
+3. **Tải game** (nếu chưa có):
+   - Chọn "Tai game" để xem download links
+   - Link sẽ tự động mở trong trình duyệt
+4. **Quản lý save files** (cần đăng nhập):
+   - **Lay file save**: Tải save từ cloud và tự động ghi vào thư mục game
+   - **Tai len file save**: Đọc save từ thư mục game và upload lên cloud
+5. **Đồng bộ nhiều máy**:
+   - Upload save từ máy 1
+   - Download save về máy 2 với cùng tài khoản
 
 ---
 
@@ -285,18 +316,26 @@ DELETE /api/saves/:id
 ## Features
 
 ### CLI Features
+✅ **Browse games without login** - xem danh sách game không cần đăng nhập
+✅ **Auto-open download links** - tự động mở link trong browser
 ✅ **Interactive menu** - dùng arrow keys để navigate
 ✅ **Persistent authentication** - token lưu trong `~/.game-saver-token`
+✅ **Auto save injection** - tự động ghi save vào đúng thư mục game
+✅ **Auto save upload** - tự động đọc save từ thư mục game
 ✅ **Colored output** - dễ đọc với chalk
 ✅ **Loading spinners** - feedback khi đang xử lý
 ✅ **Auto path resolution** - tự động tìm file theo template
 ✅ **Error handling** - thông báo lỗi rõ ràng
 
 ### Web Features
-✅ **JWT authentication**
-✅ **Admin role management**
-✅ **File upload/download**
-✅ **Row Level Security (RLS)**
+✅ **Browse all games** - xem tất cả game và download links
+✅ **Download saves on web** - tải save files trực tiếp trên web
+✅ **My Saves page** - quản lý tất cả saves của bạn
+✅ **Public saves display** - xem và tải save public trên game detail page
+✅ **JWT authentication** - đăng nhập an toàn
+✅ **Admin panel** - quản lý games, links và public saves (admin only)
+✅ **File upload/download** - tải lên và tải xuống save files
+✅ **Row Level Security (RLS)** - bảo mật dữ liệu với Supabase RLS
 
 ---
 

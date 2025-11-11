@@ -26,9 +26,9 @@ export default function Home() {
     <div className="min-h-screen relative overflow-hidden">
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 -left-40 w-96 h-96 bg-[var(--neon-cyan)] opacity-10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute top-40 right-0 w-96 h-96 bg-[var(--neon-magenta)] opacity-10 rounded-full blur-[120px] animate-pulse delay-700"></div>
-        <div className="absolute bottom-20 left-1/3 w-96 h-96 bg-[var(--neon-purple)] opacity-8 rounded-full blur-[100px] animate-pulse delay-1000"></div>
+        <div className="absolute top-0 -left-40 w-96 h-96 bg-[var(--neon-cyan)] opacity-10 rounded-full blur-[120px]"></div>
+        <div className="absolute top-40 right-0 w-96 h-96 bg-[var(--neon-magenta)] opacity-10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-20 left-1/3 w-96 h-96 bg-[var(--neon-purple)] opacity-8 rounded-full blur-[100px]"></div>
       </div>
 
       {/* Navigation */}
@@ -45,15 +45,15 @@ export default function Home() {
           </p>
           <div className="mt-4 flex items-center justify-center gap-4 text-sm text-gray-400">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[var(--neon-green)] rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-[var(--neon-green)] rounded-full"></span>
               Cloud Storage
             </span>
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[var(--neon-cyan)] rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-[var(--neon-cyan)] rounded-full"></span>
               Auto Sync
             </span>
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[var(--neon-magenta)] rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-[var(--neon-magenta)] rounded-full"></span>
               Unlimited Games
             </span>
           </div>

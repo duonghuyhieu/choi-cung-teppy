@@ -1,6 +1,7 @@
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import ora from 'ora';
+import { exec } from 'child_process';
 import { apiClient } from './services/api.js';
 import { fileSystem } from './services/fileSystem.js';
 import type { User, Game, SaveFileWithUser, GameWithLinks } from '../types/index.js';
@@ -30,14 +31,18 @@ async function mainMenu() {
       name: 'action',
       message: 'Chon hanh dong:',
       choices: [
-        { name: '[1] Dang nhap', value: 'login' },
-        { name: '[2] Dang ky', value: 'register' },
+        { name: '[1] Chon game', value: 'games' },
+        { name: '[2] Dang nhap', value: 'login' },
+        { name: '[3] Dang ky', value: 'register' },
         { name: '[0] Thoat', value: 'exit' },
       ],
     },
   ]);
 
   switch (action) {
+    case 'games':
+      await gameListMenu();
+      break;
     case 'login':
       await loginMenu();
       break;
@@ -142,7 +147,11 @@ async function registerMenu() {
 async function gameListMenu() {
   showHeader();
   console.log(chalk.green.bold(`> DANH SACH GAME`));
-  console.log(chalk.gray(`User: ${currentUser?.username} (${currentUser?.role})\n`));
+  if (currentUser) {
+    console.log(chalk.gray(`User: ${currentUser?.username}\n`));
+  } else {
+    console.log(chalk.yellow(`Chua dang nhap\n`));
+  }
 
   const spinner = ora('Dang tai danh sach game...').start();
 
@@ -152,7 +161,7 @@ async function gameListMenu() {
 
     if (!response.success || response.data.length === 0) {
       console.log(chalk.yellow('Khong co game nao.\n'));
-      await logoutMenu();
+      await mainMenu();
       return;
     }
 
@@ -163,7 +172,7 @@ async function gameListMenu() {
         name: `[${index + 1}] ${game.name}${game.description ? ` - ${game.description}` : ''}`,
         value: game.id,
       })),
-      { name: chalk.gray('[0] Dang xuat'), value: 'logout' },
+      { name: chalk.gray('[0] Quay lai'), value: 'back' },
     ];
 
     const { gameId } = await inquirer.prompt([
@@ -176,10 +185,10 @@ async function gameListMenu() {
       },
     ]);
 
-    if (gameId === 'logout') {
-      await logoutMenu();
+    if (gameId === 'back') {
+      await mainMenu();
     } else {
-      await gameDetailMenu(gameId);
+      await gameActionMenu(gameId);
     }
   } catch (error: any) {
     spinner.fail(chalk.red('Loi khi tai danh sach game'));
@@ -187,8 +196,8 @@ async function gameListMenu() {
   }
 }
 
-// Game detail menu
-async function gameDetailMenu(gameId: string) {
+// Game action menu
+async function gameActionMenu(gameId: string) {
   showHeader();
 
   const spinner = ora('Dang tai thong tin game...').start();
@@ -209,35 +218,53 @@ async function gameDetailMenu(gameId: string) {
     if (game.description) {
       console.log(chalk.gray(game.description));
     }
-    console.log(chalk.yellow(`\nSave path: ${game.save_file_path}\n`));
+    console.log(chalk.yellow(`Save path: ${game.save_file_path}\n`));
 
-    if (game.download_links.length > 0) {
-      console.log(chalk.green('DOWNLOAD LINKS:'));
-      game.download_links.forEach((link, index) => {
-        console.log(
-          chalk.cyan(`[${index + 1}] ${link.platform}${link.version ? ` v${link.version}` : ''}`)
-        );
-        console.log(chalk.gray(`    ${link.url}`));
-      });
-      console.log();
-    }
+    const choices = [
+      { name: '[1] Tai game', value: 'download' },
+      { name: '[2] Lay file save', value: 'download-save' },
+      { name: '[3] Tai len file save', value: 'upload-save' },
+      { name: '[0] Quay lai', value: 'back' },
+    ];
 
     const { action } = await inquirer.prompt([
       {
         type: 'list',
         name: 'action',
         message: 'Chon hanh dong:',
-        choices: [
-          { name: '[1] Quan ly Save Files', value: 'saves' },
-          { name: '[0] Quay lai', value: 'back' },
-        ],
+        choices,
       },
     ]);
 
-    if (action === 'saves') {
-      await saveManagerMenu(game);
-    } else {
-      await gameListMenu();
+    switch (action) {
+      case 'download':
+        await downloadGameMenu(game);
+        break;
+      case 'download-save':
+        // Check login
+        if (!currentUser) {
+          console.log(chalk.yellow('\nBan can dang nhap de lay file save!\n'));
+          await loginMenu();
+          // After login, return to game action menu
+          await gameActionMenu(gameId);
+        } else {
+          await downloadSaveMenuSimple(game);
+        }
+        break;
+      case 'upload-save':
+        // Check login
+        if (!currentUser) {
+          console.log(chalk.yellow('\nBan can dang nhap de tai len file save!\n'));
+          await loginMenu();
+          // After login, return to game action menu
+          await gameActionMenu(gameId);
+        } else {
+          await uploadSaveMenu(game);
+        }
+        break;
+      case 'back':
+        await gameListMenu();
+        break;
     }
   } catch (error: any) {
     spinner.fail(chalk.red('Loi khi tai thong tin game'));
@@ -245,10 +272,85 @@ async function gameDetailMenu(gameId: string) {
   }
 }
 
-// Save manager menu
-async function saveManagerMenu(game: GameWithLinks) {
+// Download game menu
+async function downloadGameMenu(game: GameWithLinks) {
   showHeader();
-  console.log(chalk.green.bold(`> SAVE MANAGER - ${game.name.toUpperCase()}\n`));
+  console.log(chalk.green.bold(`> TAI GAME - ${game.name.toUpperCase()}\n`));
+
+  if (game.download_links.length === 0) {
+    console.log(chalk.yellow('Khong co link tai nao.\n'));
+    await gameActionMenu(game.id);
+    return;
+  }
+
+  const choices = game.download_links.map((link, index) => {
+    const displayName = link.title || link.platform || `Download Link ${index + 1}`;
+    const version = link.version ? ` v${link.version}` : '';
+    const urlPreview = link.url.length > 60 ? link.url.substring(0, 60) + '...' : link.url;
+    return {
+      name: `[${index + 1}] ${displayName}${version} - ${urlPreview}`,
+      value: link.url,
+    };
+  });
+
+  choices.push({ name: chalk.gray('[0] Quay lai'), value: 'back' });
+
+  const { url } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'url',
+      message: 'Chon link de tai:',
+      choices,
+      pageSize: 15,
+    },
+  ]);
+
+  if (url === 'back') {
+    await gameActionMenu(game.id);
+    return;
+  }
+
+  // Open URL in default browser
+  console.log(chalk.cyan('\nDang mo link trong trinh duyet...'));
+  console.log(chalk.gray(`Link: ${url}\n`));
+
+  const command = process.platform === 'win32' ? `start "" "${url}"` :
+                  process.platform === 'darwin' ? `open "${url}"` :
+                  `xdg-open "${url}"`;
+
+  exec(command, (error) => {
+    if (error) {
+      console.log(chalk.red('Khong the mo link tu dong. Vui long copy link tren.'));
+    } else {
+      console.log(chalk.green('Da mo link trong trinh duyet!'));
+    }
+  });
+
+  await continueToGameAction(game);
+}
+
+// Continue to game action
+async function continueToGameAction(game: GameWithLinks) {
+  const { cont } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'cont',
+      message: 'Quay lai trang game?',
+      default: true,
+    },
+  ]);
+
+  if (cont) {
+    await gameActionMenu(game.id);
+  } else {
+    await gameListMenu();
+  }
+}
+
+// Download save menu (simple version - shows list and downloads)
+async function downloadSaveMenuSimple(game: GameWithLinks) {
+  showHeader();
+  console.log(chalk.green.bold(`> LAY FILE SAVE - ${game.name.toUpperCase()}\n`));
 
   const spinner = ora('Dang tai danh sach save files...').start();
 
@@ -258,63 +360,89 @@ async function saveManagerMenu(game: GameWithLinks) {
 
     if (!response.success) {
       console.log(chalk.red('Loi khi tai save files'));
-      await gameDetailMenu(game.id);
+      await gameActionMenu(game.id);
       return;
     }
 
     const saves: SaveFileWithUser[] = response.data;
 
-    if (saves.length > 0) {
-      console.log(chalk.green('DANH SACH SAVE FILES:\n'));
-      saves.forEach((save, index) => {
-        const publicTag = save.is_public ? chalk.yellow(' [PUBLIC]') : '';
-        console.log(
-          chalk.cyan(`[${index + 1}] ${save.file_name}${publicTag}`)
-        );
-        console.log(
-          chalk.gray(
-            `    By: ${save.user.username} | Size: ${(save.file_size / 1024).toFixed(2)} KB`
-          )
-        );
-        if (save.description) {
-          console.log(chalk.gray(`    ${save.description}`));
-        }
-      });
-      console.log();
-    } else {
+    if (saves.length === 0) {
       console.log(chalk.yellow('Khong co save file nao.\n'));
+      await continueToGameAction(game);
+      return;
     }
 
+    console.log(chalk.green('DANH SACH SAVE FILES:\n'));
+    saves.forEach((save, index) => {
+      const publicTag = save.is_public ? chalk.yellow(' [PUBLIC]') : '';
+      const ownerTag = save.user_id === currentUser?.id ? chalk.cyan(' [YOUR SAVE]') : '';
+      console.log(
+        chalk.cyan(`[${index + 1}] ${save.file_name}${publicTag}${ownerTag}`)
+      );
+      console.log(
+        chalk.gray(
+          `    By: ${save.user.username} | Size: ${(save.file_size / 1024).toFixed(2)} KB`
+        )
+      );
+      if (save.description) {
+        console.log(chalk.gray(`    ${save.description}`));
+      }
+    });
+    console.log();
+
     const choices = [
-      { name: '[1] Upload save tu game', value: 'upload' },
       ...saves.map((save, index) => ({
-        name: `[${index + 2}] Download va inject: ${save.file_name}`,
-        value: `download_${save.id}`,
+        name: `[${index + 1}] ${save.file_name}`,
+        value: save.id,
       })),
       { name: chalk.gray('[0] Quay lai'), value: 'back' },
     ];
 
-    const { action } = await inquirer.prompt([
+    const { saveId } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'action',
-        message: 'Chon hanh dong:',
+        name: 'saveId',
+        message: 'Chon save de tai:',
         choices,
         pageSize: 15,
       },
     ]);
 
-    if (action === 'upload') {
-      await uploadSaveMenu(game);
-    } else if (action.startsWith('download_')) {
-      const saveId = action.replace('download_', '');
-      await downloadSaveMenu(game, saveId);
-    } else {
-      await gameDetailMenu(game.id);
+    if (saveId === 'back') {
+      await gameActionMenu(game.id);
+      return;
     }
+
+    // Download and inject the selected save
+    const downloadSpinner = ora('Dang download save file...').start();
+
+    try {
+      // Get download URL
+      const downloadResponse = await apiClient.getSaveFileDownloadUrl(saveId);
+
+      if (!downloadResponse.success) {
+        downloadSpinner.fail(chalk.red('Khong lay duoc download URL'));
+        await continueToGameAction(game);
+        return;
+      }
+
+      downloadSpinner.text = 'Dang inject vao game...';
+
+      // Download and inject
+      await fileSystem.injectSaveFile(
+        downloadResponse.data.download_url,
+        game.save_file_path
+      );
+
+      downloadSpinner.succeed(chalk.green('Download va inject thanh cong!'));
+    } catch (error: any) {
+      downloadSpinner.fail(chalk.red('Download that bai'));
+    }
+
+    await continueToGameAction(game);
   } catch (error: any) {
     spinner.fail(chalk.red('Loi khi tai save files'));
-    await gameDetailMenu(game.id);
+    await gameActionMenu(game.id);
   }
 }
 
@@ -344,66 +472,14 @@ async function uploadSaveMenu(game: GameWithLinks) {
       spinner.fail(chalk.red(response.error || 'Upload that bai'));
     }
   } catch (error: any) {
-    spinner.fail(chalk.red(error.message || 'Upload that bai'));
-  }
-
-  await continueToSaveManager(game);
-}
-
-// Download save menu
-async function downloadSaveMenu(game: GameWithLinks, saveId: string) {
-  const spinner = ora('Dang download save file...').start();
-
-  try {
-    // Get download URL
-    const response = await apiClient.getSaveFileDownloadUrl(saveId);
-
-    if (!response.success) {
-      spinner.fail(chalk.red('Khong lay duoc download URL'));
-      await continueToSaveManager(game);
-      return;
+    if (error.message === 'SAVE_NOT_FOUND') {
+      spinner.fail(chalk.red('Khong tim thay file save. Vui long kiem tra game da duoc cai dat va choi chua.'));
+    } else {
+      spinner.fail(chalk.red('Upload that bai'));
     }
-
-    spinner.text = 'Dang inject vao game...';
-
-    // Download and inject
-    await fileSystem.injectSaveFile(
-      response.data.download_url,
-      game.save_file_path
-    );
-
-    spinner.succeed(chalk.green('Download va inject thanh cong!'));
-  } catch (error: any) {
-    spinner.fail(chalk.red(error.message || 'Download that bai'));
   }
 
-  await continueToSaveManager(game);
-}
-
-// Continue to save manager
-async function continueToSaveManager(game: GameWithLinks) {
-  const { cont } = await inquirer.prompt([
-    {
-      type: 'confirm',
-      name: 'cont',
-      message: 'Tiep tuc?',
-      default: true,
-    },
-  ]);
-
-  if (cont) {
-    await saveManagerMenu(game);
-  } else {
-    await gameDetailMenu(game.id);
-  }
-}
-
-// Logout menu
-async function logoutMenu() {
-  await apiClient.logout();
-  currentUser = null;
-  console.log(chalk.yellow('\nDa dang xuat!'));
-  await continueOrExit();
+  await continueToGameAction(game);
 }
 
 // Continue or exit
@@ -432,13 +508,12 @@ async function start() {
     const response = await apiClient.getMe();
     if (response.success) {
       currentUser = response.data;
-      await gameListMenu();
-    } else {
-      await mainMenu();
     }
   } catch {
-    await mainMenu();
+    // Not logged in, that's fine
   }
+
+  await mainMenu();
 }
 
 start().catch((error) => {

@@ -2,6 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
+import { HelpDialogProvider } from '@/lib/contexts/HelpDialogContext';
+import HelpDialogContent from '@/components/HelpDialogContent';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   // Create a new QueryClient instance for each request
@@ -19,6 +21,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <HelpDialogProvider>
+        {children}
+        <HelpDialogPortal />
+      </HelpDialogProvider>
+    </QueryClientProvider>
   );
+}
+
+// Portal component to render dialog at root level
+function HelpDialogPortal() {
+  // This will be rendered outside the normal component tree
+  return <HelpDialogContent />;
 }

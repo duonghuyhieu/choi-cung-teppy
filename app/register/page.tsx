@@ -3,34 +3,48 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { login, isLoggingIn } = useAuth();
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
+    // Validate
+    if (password !== confirmPassword) {
+      setError('Mật khẩu không khớp');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Mật khẩu phải có ít nhất 6 ký tự');
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      // Call login API directly
-      const response = await fetch('/api/auth/login', {
+      // Call register API
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, username, password }),
       });
 
       const data = await response.json();
-      console.log('Login result:', data);
 
       if (!data.success) {
-        setError(data.error || 'Login failed');
+        setError(data.error || 'Đăng ký thất bại');
+        setIsLoading(false);
         return;
       }
 
@@ -38,27 +52,21 @@ export default function LoginPage() {
       if (data.data?.token && data.data?.user) {
         if (typeof window !== 'undefined') {
           localStorage.setItem('auth-token', data.data.token);
-          console.log('Token saved to localStorage:', localStorage.getItem('auth-token'));
         }
 
-        // Set user data to React Query cache BEFORE redirect
+        // Set user data to React Query cache
         queryClient.setQueryData(['currentUser'], data.data.user);
-        console.log('User set to cache:', data.data.user);
 
-        // Redirect based on role
-        if (data.data.user.role === 'admin') {
-          console.log('Redirecting to /admin...');
-          router.push('/admin');
-        } else {
-          console.log('Redirecting to /...');
-          router.push('/');
-        }
+        // Redirect to home
+        router.push('/');
       } else {
-        setError('No token or user received from server');
+        setError('Không nhận được token từ server');
+        setIsLoading(false);
       }
     } catch (err: any) {
-      console.error('Login error:', err);
-      setError(err.message || 'Failed to login');
+      console.error('Register error:', err);
+      setError(err.message || 'Đăng ký thất bại');
+      setIsLoading(false);
     }
   };
 
@@ -78,12 +86,12 @@ export default function LoginPage() {
             🎮 GAME SAVER
           </Link>
           <h1 className="text-3xl font-bold mt-6 text-white">
-            Đăng nhập
+            Đăng ký tài khoản
           </h1>
-          <p className="text-gray-400 mt-2">Đăng nhập để quản lý save games của bạn</p>
+          <p className="text-gray-400 mt-2">Tạo tài khoản để quản lý save games</p>
         </div>
 
-        {/* Login Form - Glassmorphism */}
+        {/* Register Form - Glassmorphism */}
         <div className="glass-strong rounded-2xl p-8 shadow-2xl neon-border">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
@@ -92,6 +100,22 @@ export default function LoginPage() {
                 <p className="text-[var(--neon-pink)] text-sm font-medium">{error}</p>
               </div>
             )}
+
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium mb-2 text-[var(--neon-cyan)]">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 glass rounded-xl border border-white/20 focus:outline-none focus:border-[var(--neon-cyan)] focus:shadow-[0_0_15px_var(--neon-cyan)] transition-all duration-300 text-white placeholder-gray-400"
+                placeholder="your@email.com"
+              />
+            </div>
 
             {/* Username */}
             <div>
@@ -120,6 +144,24 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
+                className="w-full px-4 py-3 glass rounded-xl border border-white/20 focus:outline-none focus:border-[var(--neon-cyan)] focus:shadow-[0_0_15px_var(--neon-cyan)] transition-all duration-300 text-white placeholder-gray-400"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-[var(--neon-cyan)]">
+                Xác nhận mật khẩu
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
                 className="w-full px-4 py-3 glass rounded-xl border border-white/20 focus:outline-none focus:border-[var(--neon-cyan)] focus:shadow-[0_0_15px_var(--neon-cyan)] transition-all duration-300 text-white placeholder-gray-400"
                 placeholder="••••••••"
               />
@@ -128,27 +170,27 @@ export default function LoginPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoggingIn}
+              disabled={isLoading}
               className="w-full px-6 py-3 rounded-xl font-bold text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:scale-[1.01] active:scale-95"
             >
-              {isLoggingIn ? (
+              {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                  Đang đăng nhập...
+                  Đang đăng ký...
                 </span>
               ) : (
-                'ĐĂNG NHẬP'
+                'ĐĂNG KÝ'
               )}
             </button>
           </form>
         </div>
 
-        {/* Register link */}
+        {/* Login link */}
         <div className="text-center mt-6">
           <p className="text-gray-400">
-            Chưa có tài khoản?{' '}
-            <Link href="/register" className="text-[var(--neon-cyan)] hover:text-[var(--neon-purple)] transition-colors font-semibold">
-              Đăng ký ngay
+            Đã có tài khoản?{' '}
+            <Link href="/login" className="text-[var(--neon-cyan)] hover:text-[var(--neon-purple)] transition-colors font-semibold">
+              Đăng nhập ngay
             </Link>
           </p>
         </div>

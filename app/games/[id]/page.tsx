@@ -3,8 +3,24 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import { GameWithLinks, ApiResponse } from '@/types';
 import Navigation from '@/components/Navigation';
+
+interface SaveFileWithUser {
+  id: string;
+  game_id: string;
+  user_id: string;
+  file_name: string;
+  file_url: string;
+  file_size: number;
+  description: string | null;
+  is_public: boolean;
+  created_at: string;
+  user: {
+    username: string;
+  };
+}
 
 async function fetchGameDetail(id: string): Promise<GameWithLinks> {
   const response = await fetch(`/api/games/${id}`);
@@ -17,14 +33,58 @@ async function fetchGameDetail(id: string): Promise<GameWithLinks> {
   return data.data!;
 }
 
+async function fetchGameSaves(gameId: string): Promise<SaveFileWithUser[]> {
+  const response = await fetch(`/api/games/${gameId}/saves`);
+  const data: ApiResponse<SaveFileWithUser[]> = await response.json();
+
+  if (!data.success) {
+    throw new Error(data.error || 'Failed to fetch saves');
+  }
+
+  return data.data || [];
+}
+
 export default function GameDetailPage() {
   const params = useParams();
   const gameId = params.id as string;
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const { data: game, isLoading, error } = useQuery({
     queryKey: ['game', gameId],
     queryFn: () => fetchGameDetail(gameId),
   });
+
+  const { data: saves, isLoading: savesLoading } = useQuery({
+    queryKey: ['gameSaves', gameId],
+    queryFn: () => fetchGameSaves(gameId),
+    enabled: !!gameId,
+  });
+
+  const handleDownload = async (id: string, fileName: string) => {
+    setDownloadingId(id);
+    try {
+      // Get download URL from API
+      const response = await fetch(`/api/saves/${id}`);
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Không thể tải file');
+      }
+
+      // Download file
+      const downloadUrl = data.data.download_url;
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error: any) {
+      alert('Lỗi khi tải file: ' + error.message);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
@@ -116,6 +176,66 @@ export default function GameDetailPage() {
                               📥 Tải xuống
                             </a>
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Save Files Section */}
+                <div className="mt-8">
+                  <h2 className="text-2xl font-bold mb-4">Save Files Công Khai</h2>
+
+                  {savesLoading ? (
+                    <div className="bg-gray-700/50 rounded-lg p-6 text-center">
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                      <p className="mt-2 text-gray-400">Đang tải...</p>
+                    </div>
+                  ) : !saves || saves.length === 0 ? (
+                    <div className="bg-gray-700/50 rounded-lg p-6 text-center">
+                      <p className="text-gray-400">Chưa có save file công khai nào</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {saves.map((save) => (
+                        <div key={save.id} className="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-700 transition-colors">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-white mb-1 line-clamp-1">
+                                {save.file_name}
+                              </h3>
+                              <p className="text-xs text-gray-400">
+                                {(save.file_size / 1024).toFixed(2)} KB • By {save.user.username}
+                              </p>
+                            </div>
+                            {save.is_public && (
+                              <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded border border-green-500/30">
+                                Public
+                              </span>
+                            )}
+                          </div>
+
+                          {save.description && (
+                            <p className="text-sm text-gray-300 mb-3 line-clamp-2">
+                              {save.description}
+                            </p>
+                          )}
+
+                          <div className="text-xs text-gray-500 mb-3">
+                            {new Date(save.created_at).toLocaleDateString('vi-VN', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </div>
+
+                          <button
+                            onClick={() => handleDownload(save.id, save.file_name)}
+                            disabled={downloadingId === save.id}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {downloadingId === save.id ? 'Đang tải...' : '📥 Tải Save'}
+                          </button>
                         </div>
                       ))}
                     </div>
