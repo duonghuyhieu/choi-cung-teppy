@@ -15,27 +15,37 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-gray-800 border-b border-gray-700">
+    <nav className="glass-strong border-b border-white/10 sticky top-0 z-50 backdrop-blur-xl">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold hover:text-blue-400 transition-colors">
-            🎮 Game Saver
+          <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-[var(--neon-cyan)] to-white bg-clip-text text-transparent hover:from-white hover:to-[var(--neon-cyan)] transition-all duration-300 flex items-center gap-2">
+            <span className="text-4xl">🎮</span>
+            <span>GAME SAVER</span>
           </Link>
           <div className="flex gap-4 items-center">
             <HelpDialog />
             {isLoading ? (
-              <span className="text-gray-400">Loading...</span>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-[var(--neon-cyan)] border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-gray-400">Loading...</span>
+              </div>
             ) : user ? (
               <>
                 {user.role === 'admin' && (
-                  <Link href="/admin" className="hover:text-blue-400 transition-colors">
-                    Admin
+                  <Link
+                    href="/admin"
+                    className="px-4 py-2 glass rounded-lg border border-[var(--neon-purple)]/30 hover:border-[var(--neon-purple)]/70 hover:shadow-[0_0_10px_rgba(176,0,255,0.3)] transition-all duration-300 text-[var(--neon-purple)] font-semibold"
+                  >
+                    ⚡ Admin Panel
                   </Link>
                 )}
-                <span className="text-gray-400">Admin: {user.username}</span>
+                <div className="flex items-center gap-2 px-4 py-2 glass rounded-lg border border-white/10">
+                  <div className="w-2 h-2 bg-[var(--neon-green)] rounded-full animate-pulse"></div>
+                  <span className="text-sm text-gray-300">{user.username}</span>
+                </div>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+                  className="px-4 py-2 rounded-lg font-semibold transition-all duration-300 bg-gradient-to-r from-[var(--neon-pink)] to-[var(--neon-magenta)] hover:shadow-[0_0_12px_rgba(255,0,110,0.4)] hover:scale-[1.02] active:scale-95"
                 >
                   Logout
                 </button>

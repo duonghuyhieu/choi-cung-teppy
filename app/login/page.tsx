@@ -58,30 +58,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-[var(--neon-cyan)] opacity-10 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-[var(--neon-magenta)] opacity-10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--neon-purple)] opacity-6 rounded-full blur-[120px] animate-pulse delay-500"></div>
+      </div>
+
+      <div className="max-w-md w-full relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-bold hover:text-blue-400 transition-colors">
-            Game Saver
+          <Link href="/" className="text-4xl font-bold bg-gradient-to-r from-[var(--neon-cyan)] to-white bg-clip-text text-transparent hover:from-white hover:to-[var(--neon-cyan)] transition-all duration-300">
+            🎮 GAME SAVER
           </Link>
-          <h1 className="text-2xl font-bold mt-4">Đăng nhập Admin</h1>
+          <h1 className="text-3xl font-bold mt-6 text-white">
+            ADMIN PORTAL
+          </h1>
           <p className="text-gray-400 mt-2">Đăng nhập để quản lý games</p>
         </div>
 
-        {/* Login Form */}
-        <div className="bg-gray-800 rounded-lg p-8 shadow-xl">
+        {/* Login Form - Glassmorphism */}
+        <div className="glass-strong rounded-2xl p-8 shadow-2xl neon-border">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded">
-                {error}
+              <div className="glass rounded-lg border border-[var(--neon-pink)] bg-[var(--neon-pink)]/10 px-4 py-3">
+                <p className="text-[var(--neon-pink)] text-sm font-medium">{error}</p>
               </div>
             )}
 
             {/* Username */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium mb-2">
+              <label htmlFor="username" className="block text-sm font-medium mb-2 text-[var(--neon-cyan)]">
                 Tên đăng nhập
               </label>
               <input
@@ -90,14 +99,14 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-3 glass rounded-xl border border-white/20 focus:outline-none focus:border-[var(--neon-cyan)] focus:shadow-[0_0_15px_var(--neon-cyan)] transition-all duration-300 text-white placeholder-gray-400"
                 placeholder="username"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
+              <label htmlFor="password" className="block text-sm font-medium mb-2 text-[var(--neon-cyan)]">
                 Mật khẩu
               </label>
               <input
@@ -106,8 +115,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="Mật khẩu"
+                className="w-full px-4 py-3 glass rounded-xl border border-white/20 focus:outline-none focus:border-[var(--neon-cyan)] focus:shadow-[0_0_15px_var(--neon-cyan)] transition-all duration-300 text-white placeholder-gray-400"
+                placeholder="••••••••"
               />
             </div>
 
@@ -115,20 +124,40 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed px-4 py-3 rounded-lg font-bold transition-colors"
+              className="w-full px-6 py-3 rounded-xl font-bold text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:scale-[1.01] active:scale-95"
             >
-              {isLoggingIn ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              {isLoggingIn ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                  Đang đăng nhập...
+                </span>
+              ) : (
+                'ĐĂNG NHẬP'
+              )}
             </button>
           </form>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-700/50 rounded-lg">
-            <p className="text-sm font-semibold mb-2">Tài khoản:</p>
-            <div className="space-y-1 text-sm text-gray-300">
-              <p>Username: <span className="font-mono bg-gray-900 px-2 py-1 rounded">admin</span></p>
-              <p>Password: <span className="font-mono bg-gray-900 px-2 py-1 rounded">admin</span></p>
+          <div className="mt-6 p-4 glass rounded-xl border border-[var(--neon-purple)]/30">
+            <p className="text-sm font-semibold mb-2 text-[var(--neon-purple)]">🔑 Tài khoản demo:</p>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Username:</span>
+                <span className="font-mono glass px-3 py-1 rounded text-[var(--neon-cyan)]">admin</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">Password:</span>
+                <span className="font-mono glass px-3 py-1 rounded text-[var(--neon-cyan)]">admin</span>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Back to home link */}
+        <div className="text-center mt-6">
+          <Link href="/" className="text-sm text-gray-400 hover:text-[var(--neon-cyan)] transition-colors">
+            ← Quay lại trang chủ
+          </Link>
         </div>
       </div>
     </div>

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // API Configuration - Production URL
+// Default: https://choi-cung-teppy.vercel.app
+// Override with .env file for local development: API_URL=http://localhost:3000
 export const API_URL = process.env.API_URL || 'https://choi-cung-teppy.vercel.app';
 
 export const API_ENDPOINTS = {

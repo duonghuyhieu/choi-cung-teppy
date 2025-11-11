@@ -9,14 +9,18 @@
     "type": "git",
     "url": "https://github.com/duonghuyhieu/choi-cung-teppy.git"
   },
-  "keywords": ["game", "save", "backup", "cli", "cloud"],
+  "keywords": [
+    "game",
+    "save",
+    "backup",
+    "cli",
+    "cloud"
+  ],
   "files": [
     "bin/",
     "dist/cli/",
     "dist/types/",
-    "README.md",
-    "QUICK_START_USER.md",
-    "CLI_USER_GUIDE.md"
+    "README.md"
   ],
   "type": "module",
   "bin": {
@@ -47,6 +51,7 @@
     "ora": "^8.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "rxjs": "^7.8.2",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

@@ -2,6 +2,11 @@
 
 Hệ thống quản lý và đồng bộ save game trên cloud. Gồm web app (admin portal) và **CLI tool** chạy trực tiếp trong terminal.
 
+## 🚀 Live Demo
+
+- **Web App**: [https://choi-cung-teppy.vercel.app](https://choi-cung-teppy.vercel.app)
+- **CLI Tool**: `npx @duonghuyhieu/game-saver`
+
 ## Tính năng
 
 - 💾 **Backup save game** lên cloud (Supabase Storage)
@@ -164,7 +169,7 @@ git push
 
 Tạo Admin User:
 ```bash
-curl -X POST https://your-app.vercel.app/api/auth/register \
+curl -X POST https://choi-cung-teppy.vercel.app/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@yourdomain.com",
@@ -181,10 +186,11 @@ curl -X POST https://your-app.vercel.app/api/auth/register \
 #### Development (Local)
 
 ```bash
-# Tạo file .env trong cli/
+# CLI sử dụng production URL mặc định: https://choi-cung-teppy.vercel.app
+# Không cần tạo file .env nếu muốn dùng production
+
+# Nếu muốn test với local development server:
 echo "API_URL=http://localhost:3000" > cli/.env
-# Hoặc production:
-# echo "API_URL=https://your-app.vercel.app" > cli/.env
 
 # Run CLI
 npm run cli
@@ -195,8 +201,8 @@ npm run cli
 **Package đã được chuẩn bị sẵn!** Xem hướng dẫn chi tiết tại [PUBLISH_NPM.md](./PUBLISH_NPM.md)
 
 Tóm tắt các bước:
-1. Deploy web app lên Vercel
-2. Update production URL trong `cli/config.ts`
+1. ✅ Web app đã deploy tại: https://choi-cung-teppy.vercel.app
+2. ✅ Production URL đã được cấu hình trong `cli/config.ts`
 3. Build: `npm run build:cli`
 4. Publish: `npm publish --access public`
 5. User chạy: `npx @duonghuyhieu/game-saver`
@@ -207,7 +213,7 @@ Tóm tắt các bước:
 
 ### Web App (Admin)
 
-1. Login vào https://your-app.vercel.app
+1. Login vào https://choi-cung-teppy.vercel.app
 2. Thêm games:
    - Tên game
    - **Save path template**: `%APPDATA%/GameName/saves/*.sav`
