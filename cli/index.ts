@@ -59,8 +59,8 @@ async function loginMenu() {
     {
       type: 'input',
       name: 'email',
-      message: 'Email:',
-      validate: (input) => (input ? true : 'Email khong duoc de trong'),
+      message: 'Username or Email:',
+      validate: (input) => (input ? true : 'Username or Email khong duoc de trong'),
     },
     {
       type: 'password',

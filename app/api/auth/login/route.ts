@@ -1,31 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPassword } from '@/lib/db/users';
-import { findUserByUsername } from '@/lib/db/users-helpers';
+import { findUserByUsername, findUserByUsernameOrEmail } from '@/lib/db/users-helpers';
 import { createSession, setSessionCookie } from '@/lib/auth/session';
 import { LoginDto, ApiResponse, AuthResponse } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const body: LoginDto = await request.json();
+    const body: any = await request.json();
+
+    // Support both username/email fields
+    const usernameOrEmail = body.username || body.email;
+    const password = body.password;
 
     // Validate input
-    if (!body.username || !body.password) {
+    if (!usernameOrEmail || !password) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: 'Username and password are required',
+          error: 'Username/Email and password are required',
         },
         { status: 400 }
       );
     }
 
-    // Find user
-    const user = await findUserByUsername(body.username);
+    // Find user by username or email
+    const user = await findUserByUsernameOrEmail(usernameOrEmail);
     if (!user) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: 'Invalid username or password',
+          error: 'Invalid username/email or password',
         },
         { status: 401 }
       );
