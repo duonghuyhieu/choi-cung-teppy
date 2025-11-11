@@ -131,13 +131,36 @@ Web app chạy tại: http://localhost:3000
 ```bash
 # Push to GitHub (đã có git trong web/)
 git push
-
-# Vercel Dashboard:
-# 1. Import repository từ GitHub
-# 2. Không cần set Root Directory (project đã ở root)
-# 3. Add Environment Variables (same as .env.local)
-# 4. Deploy!
 ```
+
+#### Vercel Dashboard Setup:
+
+1. **Import repository** từ GitHub
+2. **Không cần set Root Directory** (project đã ở root)
+3. **⚠️ QUAN TRỌNG: Add Environment Variables** (Settings → Environment Variables):
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
+   SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
+   JWT_SECRET=your-random-secret-key
+   ```
+
+   **Lưu ý:**
+   - Phải thêm **TẤT CẢ** các biến này trước khi deploy
+   - Copy từ file `.env.local` của bạn
+   - Không bỏ sót biến nào, nếu không build sẽ bị lỗi!
+
+4. **Deploy!**
+
+#### Troubleshooting Vercel Build Errors:
+
+**Lỗi: "supabaseUrl is required"**
+- ✅ Kiểm tra đã add `NEXT_PUBLIC_SUPABASE_URL` trong Vercel Environment Variables chưa
+- ✅ Redeploy sau khi thêm biến môi trường mới
+
+**Lỗi: "supabaseAnonKey is required"**
+- ✅ Kiểm tra đã add `NEXT_PUBLIC_SUPABASE_ANON_KEY` chưa
 
 Tạo Admin User:
 ```bash
@@ -283,6 +306,21 @@ DELETE /api/saves/:id
 ---
 
 ## Troubleshooting
+
+### Vercel Build Error: "supabaseUrl is required"
+**Nguyên nhân**: Thiếu biến môi trường trên Vercel
+
+**Giải pháp**:
+1. Vào Vercel Dashboard → chọn project
+2. **Settings** → **Environment Variables**
+3. Thêm các biến sau:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   JWT_SECRET=your-jwt-secret
+   ```
+4. **Deployments** → chọn build mới nhất → **Redeploy**
 
 ### CLI không connect được API
 ```bash
