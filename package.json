@@ -1,6 +1,6 @@
 {
   "name": "@duonghuyhieu/game-saver",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "description": "CLI tool to backup and sync game saves to cloud",
   "author": "Duong Huy Hieu",
