@@ -25,17 +25,29 @@ function showHeader() {
 async function mainMenu() {
   showHeader();
 
+  if (currentUser) {
+    console.log(chalk.green(`Xin chao, ${currentUser.username}!\n`));
+  }
+
+  const choices = currentUser
+    ? [
+      { name: '[1] Chon game', value: 'games' },
+      { name: '[2] Dang xuat', value: 'logout' },
+      { name: '[0] Thoat', value: 'exit' },
+    ]
+    : [
+      { name: '[1] Chon game', value: 'games' },
+      { name: '[2] Dang nhap', value: 'login' },
+      { name: '[3] Dang ky', value: 'register' },
+      { name: '[0] Thoat', value: 'exit' },
+    ];
+
   const { action } = await inquirer.prompt([
     {
       type: 'list',
       name: 'action',
       message: 'Chon hanh dong:',
-      choices: [
-        { name: '[1] Chon game', value: 'games' },
-        { name: '[2] Dang nhap', value: 'login' },
-        { name: '[3] Dang ky', value: 'register' },
-        { name: '[0] Thoat', value: 'exit' },
-      ],
+      choices,
     },
   ]);
 
@@ -48,6 +60,13 @@ async function mainMenu() {
       break;
     case 'register':
       await registerMenu();
+      break;
+    case 'logout':
+      await apiClient.logout();
+      currentUser = null;
+      console.log(chalk.green('\nDa dang xuat!'));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await mainMenu();
       break;
     case 'exit':
       console.log(chalk.yellow('\nTam biet!'));
@@ -315,8 +334,8 @@ async function downloadGameMenu(game: GameWithLinks) {
   console.log(chalk.gray(`Link: ${url}\n`));
 
   const command = process.platform === 'win32' ? `start "" "${url}"` :
-                  process.platform === 'darwin' ? `open "${url}"` :
-                  `xdg-open "${url}"`;
+    process.platform === 'darwin' ? `open "${url}"` :
+      `xdg-open "${url}"`;
 
   exec(command, (error) => {
     if (error) {
@@ -413,6 +432,9 @@ async function downloadSaveMenuSimple(game: GameWithLinks) {
       return;
     }
 
+    // Find selected save
+    const selectedSave = saves.find((s) => s.id === saveId);
+
     // Download and inject the selected save
     const downloadSpinner = ora('Dang download save file...').start();
 
@@ -431,7 +453,8 @@ async function downloadSaveMenuSimple(game: GameWithLinks) {
       // Download and inject
       await fileSystem.injectSaveFile(
         downloadResponse.data.download_url,
-        game.save_file_path
+        game.save_file_path,
+        selectedSave?.file_name
       );
 
       downloadSpinner.succeed(chalk.green('Download va inject thanh cong!'));
@@ -475,6 +498,7 @@ async function uploadSaveMenu(game: GameWithLinks) {
     if (error.message === 'SAVE_NOT_FOUND') {
       spinner.fail(chalk.red('Khong tim thay file save. Vui long kiem tra game da duoc cai dat va choi chua.'));
     } else {
+      console.error(chalk.red('Error details:'), error.response?.data || error.message);
       spinner.fail(chalk.red('Upload that bai'));
     }
   }

@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { User } from '@/types';
 
@@ -34,10 +34,20 @@ export function verifySession(token: string): SessionData | null {
   }
 }
 
-// Get current session from cookies (server-side)
+// Get current session from cookies or Authorization header (server-side)
 export async function getSession(): Promise<SessionData | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
+  let token = cookieStore.get(COOKIE_NAME)?.value;
+
+  // If no cookie, check Authorization header
+  if (!token) {
+    const headersList = await headers();
+    const authHeader = headersList.get('Authorization');
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    }
+  }
 
   if (!token) {
     return null;

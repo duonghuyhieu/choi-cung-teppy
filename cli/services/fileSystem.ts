@@ -83,16 +83,26 @@ export class FileSystemService {
    */
   async injectSaveFile(
     downloadUrl: string,
-    gamePathTemplate: string
+    gamePathTemplate: string,
+    fileName?: string
   ): Promise<void> {
     // 1. Download file from API
     const fileData = await apiClient.downloadFile(downloadUrl);
 
-    // 2. Resolve game path
-    const resolvedPath = await this.resolvePath(gamePathTemplate);
+    let targetPath: string;
+
+    if (fileName) {
+      // If fileName is provided, save to the directory with this name
+      const dirTemplate = path.dirname(gamePathTemplate);
+      const resolvedDir = await this.resolvePath(dirTemplate);
+      targetPath = path.join(resolvedDir, fileName);
+    } else {
+      // Resolve game path (find existing file or use template)
+      targetPath = await this.resolvePath(gamePathTemplate);
+    }
 
     // 3. Write file
-    await this.writeFile(resolvedPath, fileData);
+    await this.writeFile(targetPath, fileData);
   }
 
   /**
