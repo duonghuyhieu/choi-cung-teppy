@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { GameWithLinks, ApiResponse } from '@/types';
 import Navigation from '@/components/Navigation';
 import UploadSaveModal from '@/components/UploadSaveModal';
+import GameAccountsSection from '@/components/GameAccountsSection';
 import { useAuth } from '@/lib/auth/hooks';
 
 interface SaveFileWithUser {
@@ -185,6 +186,13 @@ export default function GameDetailPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Game Accounts Section */}
+                {game.game_type && game.game_type.length > 0 && (
+                  <div className="mt-8">
+                    <GameAccountsSection gameId={gameId} gameType={game.game_type} />
+                  </div>
+                )}
 
                 {/* Save Files Section */}
                 <div className="mt-8">

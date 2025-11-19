@@ -1,5 +1,6 @@
 export * from './user';
 export * from './game';
+export * from './game-account';
 export * from './save';
 
 // API Response wrapper

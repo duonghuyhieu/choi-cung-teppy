@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/hooks';
@@ -8,13 +8,29 @@ import Navigation from '@/components/Navigation';
 import AdminGamesTab from '@/components/admin/AdminGamesTab';
 import AdminUsersTab from '@/components/admin/AdminUsersTab';
 import AdminSavesTab from '@/components/admin/AdminSavesTab';
+import AdminAccountsTab from '@/components/admin/AdminAccountsTab';
 
-type TabType = 'games' | 'users' | 'saves';
+type TabType = 'games' | 'users' | 'saves' | 'accounts';
 
 export default function AdminPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('games');
+  const [games, setGames] = useState<any[]>([]);
+
+  // Load games for accounts tab
+  useEffect(() => {
+    if (activeTab === 'accounts') {
+      fetch('/api/games')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setGames(data.data);
+          }
+        })
+        .catch(err => console.error('Failed to load games:', err));
+    }
+  }, [activeTab]);
 
   if (authLoading) {
     return (
@@ -69,7 +85,7 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab('games')}
             className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
@@ -79,6 +95,16 @@ export default function AdminPage() {
             }`}
           >
             🎮 Games
+          </button>
+          <button
+            onClick={() => setActiveTab('accounts')}
+            className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
+              activeTab === 'accounts'
+                ? 'bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] shadow-[0_0_15px_rgba(0,240,255,0.4)]'
+                : 'glass border border-white/20 text-gray-300 hover:border-[var(--neon-cyan)]/50'
+            }`}
+          >
+            🔑 Accounts
           </button>
           <button
             onClick={() => setActiveTab('users')}
@@ -104,6 +130,7 @@ export default function AdminPage() {
 
         {/* Tab Content */}
         {activeTab === 'games' && <AdminGamesTab />}
+        {activeTab === 'accounts' && <AdminAccountsTab games={games} />}
         {activeTab === 'users' && <AdminUsersTab />}
         {activeTab === 'saves' && <AdminSavesTab />}
       </div>

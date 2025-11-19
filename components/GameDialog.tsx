@@ -1,7 +1,7 @@
 'use client';
 
 import { Game, CreateGameDto, UpdateGameDto } from '@/types';
-import GameForm from './GameForm';
+import GameFormMultiVersion from './admin/GameFormMultiVersion';
 
 interface GameDialogProps {
   isOpen: boolean;
@@ -15,13 +15,16 @@ interface GameDialogProps {
 export default function GameDialog({ isOpen, onClose, mode, game, onSubmit, isLoading }: GameDialogProps) {
   if (!isOpen) return null;
 
-  const title = mode === 'create' ? 'Thêm Game Mới' : mode === 'edit' ? 'Sửa Game' : 'Chi tiết Game';
+  // GameFormSimple không hỗ trợ view mode, chuyển sang edit
+  const formMode = mode === 'view' ? 'edit' : mode;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-gray-900 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">{title}</h2>
+      <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-gray-900 border-b border-gray-700 px-6 py-4 flex justify-between items-center z-10">
+          <h2 className="text-2xl font-bold">
+            {mode === 'create' ? 'Thêm Game Mới' : mode === 'edit' ? 'Sửa Game' : 'Chi tiết Game'}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white text-2xl"
@@ -31,8 +34,8 @@ export default function GameDialog({ isOpen, onClose, mode, game, onSubmit, isLo
         </div>
 
         <div className="p-6">
-          <GameForm
-            mode={mode}
+          <GameFormMultiVersion
+            mode={formMode}
             game={game}
             gameId={game?.id}
             onSubmit={async (data, links) => {

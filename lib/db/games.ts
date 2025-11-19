@@ -21,6 +21,7 @@ export async function createGame(
       description: data.description,
       thumbnail_url: data.thumbnail_url,
       save_file_path: data.save_file_path,
+      game_type: data.game_type || 'crack',
       created_by: userId,
     })
     .select()
