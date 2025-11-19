@@ -188,7 +188,7 @@ async function gameListMenu() {
 
     const choices = [
       ...games.map((game, index) => ({
-        name: `[${index + 1}] ${game.name}${game.description ? ` - ${game.description}` : ''}`,
+        name: `[${index + 1}] ${game.name}`,
         value: game.id,
       })),
       { name: chalk.gray('[0] Quay lai'), value: 'back' },
@@ -471,6 +471,25 @@ async function downloadSaveMenuSimple(game: GameWithLinks) {
 
 // Upload save menu
 async function uploadSaveMenu(game: GameWithLinks) {
+  showHeader();
+  console.log(chalk.green.bold(`> TAI LEN FILE SAVE - ${game.name.toUpperCase()}\n`));
+
+  // Ask for description and public/private
+  const answers = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'description',
+      message: 'Mo ta save file (optional):',
+      default: '',
+    },
+    {
+      type: 'confirm',
+      name: 'isPublic',
+      message: 'Chia se cong khai?',
+      default: false,
+    },
+  ]);
+
   const spinner = ora('Dang upload save file...').start();
 
   try {
@@ -486,7 +505,8 @@ async function uploadSaveMenu(game: GameWithLinks) {
       game.id,
       buffer,
       fileName,
-      'Uploaded from CLI'
+      answers.description || undefined,
+      answers.isPublic
     );
 
     if (response.success) {

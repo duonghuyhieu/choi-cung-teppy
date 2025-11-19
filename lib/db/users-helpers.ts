@@ -40,3 +40,41 @@ export async function findUserByUsernameOrEmail(usernameOrEmail: string): Promis
 
   return user;
 }
+
+export async function updateUserPassword(userId: string, newPassword: string): Promise<void> {
+  const bcrypt = require('bcryptjs');
+  const SALT_ROUNDS = 10;
+  
+  const password_hash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+  const { error } = await supabaseAdmin
+    .from('users')
+    .update({ password_hash })
+    .eq('id', userId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function updateUserInfo(userId: string, data: { username?: string; email?: string; role?: 'admin' | 'user' }): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from('users')
+    .update(data)
+    .eq('id', userId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function deleteUser(userId: string): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from('users')
+    .delete()
+    .eq('id', userId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
