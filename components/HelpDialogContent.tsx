@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useHelpDialog } from '@/lib/contexts/HelpDialogContext';
 
 export default function HelpDialogContent() {
@@ -30,9 +31,9 @@ export default function HelpDialogContent() {
 
   if (!isOpen) return null;
 
-  return (
+  const dialogContent = (
     <div
-      className="fixed inset-0 z-[999999] flex items-start justify-center pt-[5vh] pb-[5vh] px-4 overflow-y-auto bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-start justify-center pt-[5vh] pb-[5vh] px-4 overflow-y-auto bg-black/80 backdrop-blur-sm"
       onClick={onClose}
       style={{ margin: 0 }}
     >
@@ -158,4 +159,6 @@ export default function HelpDialogContent() {
       </div>
     </div>
   );
+
+  return typeof window !== 'undefined' ? createPortal(dialogContent, document.body) : null;
 }

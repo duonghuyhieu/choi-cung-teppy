@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface UploadSaveModalProps {
@@ -72,9 +73,9 @@ export default function UploadSaveModal({
 
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
       onClick={handleClose}
     >
       <div
@@ -180,4 +181,6 @@ export default function UploadSaveModal({
       </div>
     </div>
   );
+
+  return typeof window !== 'undefined' ? createPortal(modalContent, document.body) : null;
 }

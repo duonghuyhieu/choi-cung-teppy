@@ -12,6 +12,19 @@ import {
 export async function createGameAccount(
   data: CreateGameAccountDto
 ): Promise<GameAccount> {
+  // Check if username already exists
+  const { data: existingAccount } = await supabaseAdmin
+    .from('game_accounts')
+    .select('id, username, game_id, game:games(name)')
+    .eq('username', data.username)
+    .single();
+
+  if (existingAccount) {
+    throw new Error(
+      `Tài khoản Steam với username "${data.username}" đã tồn tại trong hệ thống. Vui lòng sử dụng username khác.`
+    );
+  }
+
   const { data: account, error } = await supabaseAdmin
     .from('game_accounts')
     .insert({
@@ -25,6 +38,12 @@ export async function createGameAccount(
     .single();
 
   if (error) {
+    // Handle unique constraint violation from database
+    if (error.code === '23505' && error.message.includes('username')) {
+      throw new Error(
+        `Tài khoản Steam với username "${data.username}" đã tồn tại trong hệ thống. Vui lòng sử dụng username khác.`
+      );
+    }
     throw new Error(error.message);
   }
 
@@ -77,6 +96,22 @@ export async function updateGameAccount(
   id: string,
   data: UpdateGameAccountDto
 ): Promise<GameAccount> {
+  // If username is being updated, check if it already exists
+  if (data.username) {
+    const { data: existingAccount } = await supabaseAdmin
+      .from('game_accounts')
+      .select('id, username')
+      .eq('username', data.username)
+      .neq('id', id) // Exclude current account
+      .single();
+
+    if (existingAccount) {
+      throw new Error(
+        `Tài khoản Steam với username "${data.username}" đã tồn tại trong hệ thống. Vui lòng sử dụng username khác.`
+      );
+    }
+  }
+
   const { data: account, error } = await supabaseAdmin
     .from('game_accounts')
     .update(data)
@@ -85,6 +120,12 @@ export async function updateGameAccount(
     .single();
 
   if (error) {
+    // Handle unique constraint violation from database
+    if (error.code === '23505' && error.message.includes('username')) {
+      throw new Error(
+        `Tài khoản Steam với username "${data.username}" đã tồn tại trong hệ thống. Vui lòng sử dụng username khác.`
+      );
+    }
     throw new Error(error.message);
   }
 
@@ -221,6 +262,7 @@ export async function getAccountStatus(
 
   return {
     id: account.id,
+    type: account.type,
     username: account.username,
     is_available: isAvailable,
     in_use_by: account.user || undefined,
@@ -250,6 +292,7 @@ export async function getAccountsStatusByGame(
       return {
         id: account.id,
         username: account.username,
+        type: account.type,
         is_available: isAvailable,
         in_use_by: account.user || undefined,
         time_remaining: timeRemaining,

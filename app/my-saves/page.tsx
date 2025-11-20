@@ -7,6 +7,8 @@ import { useAuth } from '@/lib/auth/hooks';
 import { ApiResponse } from '@/types';
 import Navigation from '@/components/Navigation';
 import { useHelpDialog } from '@/lib/contexts/HelpDialogContext';
+import { useDialog } from '@/lib/hooks/useDialog';
+import Dialog from '@/components/Dialog';
 
 interface SaveFileWithGame {
   id: string;
@@ -53,6 +55,7 @@ export default function MySavesPage() {
   const queryClient = useQueryClient();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { openDialog } = useHelpDialog();
+  const { dialogState, closeDialog, confirm, error: showError } = useDialog();
 
   const { data: saves, isLoading, error } = useQuery({
     queryKey: ['mySaves'],
@@ -68,13 +71,16 @@ export default function MySavesPage() {
   });
 
   const handleDelete = async (id: string, fileName: string) => {
-    if (confirm(`Bạn có chắc muốn xóa save "${fileName}"?`)) {
-      try {
-        await deleteMutation.mutateAsync(id);
-      } catch (error: any) {
-        alert('Lỗi: ' + error.message);
+    confirm(
+      `Bạn có chắc muốn xóa save "${fileName}"?`,
+      async () => {
+        try {
+          await deleteMutation.mutateAsync(id);
+        } catch (err: any) {
+          showError('Lỗi: ' + err.message);
+        }
       }
-    }
+    );
   };
 
   const handleDownload = async (id: string, fileName: string) => {
@@ -93,8 +99,8 @@ export default function MySavesPage() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error: any) {
-      alert('Lỗi khi tải file: ' + error.message);
+    } catch (err: any) {
+      showError('Lỗi khi tải file: ' + err.message);
     }
   };
 
@@ -302,6 +308,19 @@ export default function MySavesPage() {
           </div>
         )}
       </div>
+
+      {/* Dialog */}
+      <Dialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        title={dialogState.title}
+        message={dialogState.message}
+        type={dialogState.type}
+        confirmText={dialogState.confirmText}
+        cancelText={dialogState.cancelText}
+        onConfirm={dialogState.onConfirm}
+        onCancel={dialogState.onCancel}
+      />
     </div>
   );
 }

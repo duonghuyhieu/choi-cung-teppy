@@ -95,6 +95,17 @@ export async function POST(
       );
     }
 
+    // Check if it's a duplicate username error
+    if (error.message.includes('đã tồn tại trong hệ thống')) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: error.message,
+        },
+        { status: 409 } // Conflict status code
+      );
+    }
+
     return NextResponse.json<ApiResponse>(
       {
         success: false,

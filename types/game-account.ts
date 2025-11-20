@@ -41,6 +41,7 @@ export interface AssignAccountDto {
 export interface AccountStatus {
   id: string;
   username: string;
+  type: GameAccountType;
   is_available: boolean;
   in_use_by?: {
     id: string;

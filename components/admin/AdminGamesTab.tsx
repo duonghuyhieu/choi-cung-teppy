@@ -5,6 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, Pencil, Trash2, Plus } from 'lucide-react';
 import { Game, CreateGameDto, UpdateGameDto, ApiResponse } from '@/types';
 import GameDialog from '@/components/GameDialog';
+import { useDialog } from '@/lib/hooks/useDialog';
+import Dialog from '@/components/Dialog';
 
 async function fetchGames(): Promise<Game[]> {
   const response = await fetch('/api/games');
@@ -45,6 +47,7 @@ async function deleteGame(gameId: string): Promise<void> {
 
 export default function AdminGamesTab() {
   const queryClient = useQueryClient();
+  const { dialogState, closeDialog, confirm } = useDialog();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit' | 'view'>('create');
   const [selectedGame, setSelectedGame] = useState<Game | undefined>();
@@ -75,20 +78,22 @@ export default function AdminGamesTab() {
     },
   });
 
-  const handleDialogSubmit = async (gameData: CreateGameDto | UpdateGameDto, links?: { title: string; url: string }[]) => {
-    const dataWithLinks = { ...gameData, links: links || [] };
-
+  const handleDialogSubmit = async (gameData: CreateGameDto | UpdateGameDto) => {
+    // Payload already contains crack, steam_on, steam_off from form
     if (dialogMode === 'create') {
-      await createMutation.mutateAsync(dataWithLinks as CreateGameDto);
+      await createMutation.mutateAsync(gameData as CreateGameDto);
     } else if (selectedGame) {
-      await updateMutation.mutateAsync({ id: selectedGame.id, data: dataWithLinks as UpdateGameDto });
+      await updateMutation.mutateAsync({ id: selectedGame.id, data: gameData as UpdateGameDto });
     }
   };
 
   const handleDelete = (game: Game) => {
-    if (window.confirm(`Bạn có chắc muốn xóa game "${game.name}"?`)) {
-      deleteMutation.mutate(game.id);
-    }
+    confirm(
+      `Bạn có chắc muốn xóa game "${game.name}"?`,
+      () => {
+        deleteMutation.mutate(game.id);
+      }
+    );
   };
 
   return (
@@ -194,6 +199,19 @@ export default function AdminGamesTab() {
         game={selectedGame}
         onSubmit={handleDialogSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      {/* Confirm Dialog */}
+      <Dialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        title={dialogState.title}
+        message={dialogState.message}
+        type={dialogState.type}
+        confirmText={dialogState.confirmText}
+        cancelText={dialogState.cancelText}
+        onConfirm={dialogState.onConfirm}
+        onCancel={dialogState.onCancel}
       />
     </div>
   );

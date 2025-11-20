@@ -20,8 +20,8 @@ export async function createGame(
       name: data.name,
       description: data.description,
       thumbnail_url: data.thumbnail_url,
-      save_file_path: data.save_file_path,
-      game_type: data.game_type || 'crack',
+      save_file_path: data.save_file_path || null,
+      game_type: data.game_type && data.game_type.length > 0 ? data.game_type : ['crack'],
       created_by: userId,
     })
     .select()
@@ -170,13 +170,14 @@ export async function createDownloadLink(
 
 export async function createMultipleDownloadLinks(
   gameId: string,
-  links: { title: string; url: string }[]
+  links: { title: string; url: string; version_type?: string }[]
 ): Promise<DownloadLink[]> {
   const linksToInsert = links.map((link) => ({
     game_id: gameId,
     title: link.title,
     url: link.url,
     file_size: null,
+    version_type: link.version_type || 'crack',
   }));
 
   const { data, error } = await supabaseAdmin

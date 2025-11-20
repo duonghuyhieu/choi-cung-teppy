@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllGames, createGameWithLinks, getDownloadLinksByGame } from '@/lib/db/games';
+import { getAllGames, createGame, createMultipleDownloadLinks, getDownloadLinksByGame } from '@/lib/db/games';
+import { createGameAccount } from '@/lib/db/game-accounts';
 import { requireAuth, requireAdmin } from '@/lib/auth/session';
 import { ApiResponse, Game, GameWithLinks, CreateGameDto } from '@/types';
 
@@ -35,44 +36,81 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/games - Create game with links (admin only)
+// POST /api/games - Create game with links and accounts (admin only)
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAdmin();
-    const body: CreateGameDto = await request.json();
+    const body = await request.json();
 
     // Validate input
-    if (!body.name || !body.save_file_path) {
+    if (!body.name) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: 'Name and save_file_path are required',
+          error: 'Name is required',
         },
         { status: 400 }
       );
     }
 
-    // Validate links if provided
-    if (body.links && body.links.length > 0) {
-      for (const link of body.links) {
-        if (!link.title || !link.url) {
-          return NextResponse.json<ApiResponse>(
-            {
-              success: false,
-              error: 'Each link must have a title and URL',
-            },
-            { status: 400 }
-          );
-        }
+    // Derive game_type from provided data
+    const gameTypes: string[] = [];
+    if (body.crack && body.crack.length > 0) gameTypes.push('crack');
+    if (body.steam_on && body.steam_on.length > 0) gameTypes.push('steam_online');
+    if (body.steam_off && body.steam_off.length > 0) gameTypes.push('steam_offline');
+
+    // Create game
+    const gameData: CreateGameDto = {
+      name: body.name,
+      description: body.description,
+      thumbnail_url: body.thumbnail_url,
+      save_file_path: body.save_file_path,
+      game_type: gameTypes as any, // Cast to match GameType[]
+    };
+
+    // We use createGame directly instead of createGameWithLinks because we handle links/accounts manually
+    const game = await createGame(gameData, session.userId);
+
+    // 1. Handle Crack Links
+    if (body.crack && body.crack.length > 0) {
+      const linksToCreate = body.crack.map((link: any) => ({
+        title: link.title,
+        url: link.url,
+        version_type: 'crack'
+      }));
+      await createMultipleDownloadLinks(game.id, linksToCreate);
+    }
+
+    // 2. Handle Steam Online Accounts
+    if (body.steam_on && body.steam_on.length > 0) {
+      for (const acc of body.steam_on) {
+        await createGameAccount({
+          game_id: game.id,
+          type: 'steam_online',
+          username: acc.username,
+          password: acc.password,
+          guard_link: acc.guard_link
+        });
       }
     }
 
-    const gameWithLinks = await createGameWithLinks(body, session.userId);
+    // 3. Handle Steam Offline Accounts
+    if (body.steam_off && body.steam_off.length > 0) {
+      for (const acc of body.steam_off) {
+        await createGameAccount({
+          game_id: game.id,
+          type: 'steam_offline',
+          username: acc.username,
+          password: acc.password,
+          guard_link: acc.guard_link
+        });
+      }
+    }
 
-    return NextResponse.json<ApiResponse<GameWithLinks>>(
+    return NextResponse.json<ApiResponse>(
       {
         success: true,
-        data: gameWithLinks,
+        data: game,
         message: 'Game created successfully',
       },
       { status: 201 }
@@ -87,6 +125,17 @@ export async function POST(request: NextRequest) {
           error: error.message,
         },
         { status: error.message.includes('Unauthorized') ? 401 : 403 }
+      );
+    }
+
+    // Check if it's a duplicate username error
+    if (error.message.includes('đã tồn tại trong hệ thống')) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: error.message,
+        },
+        { status: 409 } // Conflict status code
       );
     }
 

@@ -4,11 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { GameWithLinks, ApiResponse } from '@/types';
+import { GameWithLinks, ApiResponse, GameType } from '@/types';
 import Navigation from '@/components/Navigation';
 import UploadSaveModal from '@/components/UploadSaveModal';
 import GameAccountsSection from '@/components/GameAccountsSection';
 import { useAuth } from '@/lib/auth/hooks';
+import { useDialog } from '@/lib/hooks/useDialog';
+import Dialog from '@/components/Dialog';
+
+type TabType = 'crack' | 'steam_online' | 'steam_offline';
 
 interface SaveFileWithUser {
   id: string;
@@ -50,8 +54,10 @@ async function fetchGameSaves(gameId: string): Promise<SaveFileWithUser[]> {
 export default function GameDetailPage() {
   const params = useParams();
   const gameId = params.id as string;
+  const { dialogState, closeDialog, error: showError } = useDialog();
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType | null>(null);
   const { user } = useAuth();
 
   const { data: game, isLoading, error } = useQuery({
@@ -84,8 +90,8 @@ export default function GameDetailPage() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error: any) {
-      alert('Lỗi khi tải file: ' + error.message);
+    } catch (err: any) {
+      showError('Lỗi khi tải file: ' + err.message);
     } finally {
       setDownloadingId(null);
     }
@@ -148,49 +154,105 @@ export default function GameDetailPage() {
                   </div>
                 </div>
 
-                {/* Download Links */}
-                <div>
-                  <h2 className="text-2xl font-bold mb-4">Link Tải Game</h2>
-
-                  {!game.download_links || game.download_links.length === 0 ? (
-                    <div className="bg-gray-700/50 rounded-lg p-6 text-center">
-                      <p className="text-gray-400">Chưa có link tải cho game này</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {game.download_links.map((link, index) => (
-                        <div key={link.id} className="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-700 transition-colors">
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex-1">
-                              <h3 className="text-lg font-bold text-white">
-                                {link.title}
-                              </h3>
-                              {link.file_size && (
-                                <p className="text-xs text-gray-400 mt-1">
-                                  Dung lượng: {link.file_size}
-                                </p>
-                              )}
-                            </div>
-
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors whitespace-nowrap"
-                            >
-                              📥 Tải xuống
-                            </a>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Game Accounts Section */}
+                {/* Game Type Tabs */}
                 {game.game_type && game.game_type.length > 0 && (
-                  <div className="mt-8">
-                    <GameAccountsSection gameId={gameId} gameType={game.game_type} />
+                  <div>
+                    <h2 className="text-2xl font-bold mb-4">Phiên bản Game</h2>
+
+                    {/* Tabs */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {game.game_type.includes('crack') && (
+                        <button
+                          onClick={() => setActiveTab(activeTab === 'crack' ? null : 'crack')}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                            activeTab === 'crack'
+                              ? 'bg-orange-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
+                          🏴‍☠️ Crack
+                        </button>
+                      )}
+                      {game.game_type.includes('steam_online') && (
+                        <button
+                          onClick={() => setActiveTab(activeTab === 'steam_online' ? null : 'steam_online')}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                            activeTab === 'steam_online'
+                              ? 'bg-purple-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
+                          🟣 Steam Online
+                        </button>
+                      )}
+                      {game.game_type.includes('steam_offline') && (
+                        <button
+                          onClick={() => setActiveTab(activeTab === 'steam_offline' ? null : 'steam_offline')}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                            activeTab === 'steam_offline'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
+                          🔵 Steam Offline
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Tab Content */}
+                    {activeTab === 'crack' && (
+                      <div className="bg-gray-700/30 rounded-lg p-6 border border-orange-500/30">
+                        <h3 className="text-xl font-bold mb-4 text-orange-400">🏴‍☠️ Link Tải Crack</h3>
+                        {!game.download_links || game.download_links.length === 0 ? (
+                          <p className="text-gray-400">Chưa có link tải cho phiên bản này</p>
+                        ) : (
+                          <div className="space-y-3">
+                            {game.download_links.map((link) => (
+                              <div key={link.id} className="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800 transition-colors">
+                                <div className="flex items-center justify-between gap-4">
+                                  <div className="flex-1">
+                                    <h4 className="text-lg font-bold text-white">
+                                      {link.title}
+                                    </h4>
+                                    {link.file_size && (
+                                      <p className="text-xs text-gray-400 mt-1">
+                                        Dung lượng: {link.file_size}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <a
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors whitespace-nowrap"
+                                  >
+                                    📥 Tải xuống
+                                  </a>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeTab === 'steam_online' && (
+                      <div className="bg-gray-700/30 rounded-lg p-6 border border-purple-500/30">
+                        <GameAccountsSection gameId={gameId} gameType={['steam_online']} />
+                      </div>
+                    )}
+
+                    {activeTab === 'steam_offline' && (
+                      <div className="bg-gray-700/30 rounded-lg p-6 border border-blue-500/30">
+                        <GameAccountsSection gameId={gameId} gameType={['steam_offline']} />
+                      </div>
+                    )}
+
+                    {!activeTab && (
+                      <div className="bg-gray-700/30 rounded-lg p-6 text-center">
+                        <p className="text-gray-400">Chọn một phiên bản game ở trên để xem chi tiết</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -291,6 +353,19 @@ export default function GameDetailPage() {
         onClose={() => setIsUploadModalOpen(false)}
         gameId={gameId}
         gameName={game?.name || ''}
+      />
+
+      {/* Dialog */}
+      <Dialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        title={dialogState.title}
+        message={dialogState.message}
+        type={dialogState.type}
+        confirmText={dialogState.confirmText}
+        cancelText={dialogState.cancelText}
+        onConfirm={dialogState.onConfirm}
+        onCancel={dialogState.onCancel}
       />
     </div>
   );

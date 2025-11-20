@@ -5,7 +5,7 @@ export interface Game {
   name: string;
   description: string | null;
   thumbnail_url: string | null;
-  save_file_path: string; // Template path: %APPDATA%/GameName/saves/*.sav
+  save_file_path: string | null; // Template path: %APPDATA%/GameName/saves/*.sav - optional for CLI sync
   game_type: GameType[]; // Array of game types - can have multiple versions
   created_by: string;
   created_at: string;
@@ -16,7 +16,7 @@ export interface CreateGameDto {
   name: string;
   description?: string;
   thumbnail_url?: string;
-  save_file_path: string;
+  save_file_path?: string; // Optional - if not provided, CLI sync won't work
   game_type?: GameType[]; // Array of game types
   links?: { title: string; url: string }[];
 }

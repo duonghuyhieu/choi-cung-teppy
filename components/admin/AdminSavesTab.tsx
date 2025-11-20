@@ -3,6 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Trash2, Download, Eye } from 'lucide-react';
 import { ApiResponse } from '@/types';
+import { useDialog } from '@/lib/hooks/useDialog';
+import Dialog from '@/components/Dialog';
 
 interface SaveFileWithDetails {
   id: string;
@@ -45,6 +47,7 @@ async function deleteSave(saveId: string): Promise<void> {
 
 export default function AdminSavesTab() {
   const queryClient = useQueryClient();
+  const { dialogState, closeDialog, confirm } = useDialog();
 
   const { data: saves, isLoading } = useQuery({
     queryKey: ['admin-saves'],
@@ -59,9 +62,12 @@ export default function AdminSavesTab() {
   });
 
   const handleDelete = (save: SaveFileWithDetails) => {
-    if (window.confirm(`Bạn có chắc muốn xóa save file "${save.file_name}"?`)) {
-      deleteMutation.mutate(save.id);
-    }
+    confirm(
+      `Bạn có chắc muốn xóa save file "${save.file_name}"?`,
+      () => {
+        deleteMutation.mutate(save.id);
+      }
+    );
   };
 
   const formatFileSize = (bytes: number) => {
@@ -159,6 +165,19 @@ export default function AdminSavesTab() {
           </table>
         </div>
       )}
+
+      {/* Confirm Dialog */}
+      <Dialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        title={dialogState.title}
+        message={dialogState.message}
+        type={dialogState.type}
+        confirmText={dialogState.confirmText}
+        cancelText={dialogState.cancelText}
+        onConfirm={dialogState.onConfirm}
+        onCancel={dialogState.onCancel}
+      />
     </div>
   );
 }

@@ -8,6 +8,8 @@ import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { Game, DownloadLink, CreateDownloadLinkDto, ApiResponse } from '@/types';
 import { useAuth } from '@/lib/auth/hooks';
 import Navigation from '@/components/Navigation';
+import { useDialog } from '@/lib/hooks/useDialog';
+import Dialog from '@/components/Dialog';
 
 async function fetchGameWithLinks(gameId: string): Promise<Game & { download_links: DownloadLink[] }> {
   const [gameRes, linksRes] = await Promise.all([
@@ -51,6 +53,7 @@ export default function ManageGamePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading } = useAuth();
+  const { dialogState, closeDialog, confirm } = useDialog();
   const gameId = params.id as string;
 
   const [showAddLink, setShowAddLink] = useState(false);
@@ -273,9 +276,12 @@ export default function ManageGamePage() {
                   </div>
                   <button
                     onClick={() => {
-                      if (window.confirm(`Xóa link "${link.title}"?`)) {
-                        deleteLinkMutation.mutate(link.id);
-                      }
+                      confirm(
+                        `Bạn có chắc muốn xóa link "${link.title}"?`,
+                        () => {
+                          deleteLinkMutation.mutate(link.id);
+                        }
+                      );
                     }}
                     disabled={deleteLinkMutation.isPending}
                     className="ml-4 p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 disabled:text-gray-500 rounded transition-colors"
@@ -289,6 +295,19 @@ export default function ManageGamePage() {
           )}
         </div>
       </div>
+
+      {/* Dialog */}
+      <Dialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        title={dialogState.title}
+        message={dialogState.message}
+        type={dialogState.type}
+        confirmText={dialogState.confirmText}
+        cancelText={dialogState.cancelText}
+        onConfirm={dialogState.onConfirm}
+        onCancel={dialogState.onCancel}
+      />
     </div>
   );
 }

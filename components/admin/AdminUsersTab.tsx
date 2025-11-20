@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Key, Trash2, Edit } from 'lucide-react';
 import { User, ApiResponse } from '@/types';
+import { useDialog } from '@/lib/hooks/useDialog';
+import Dialog from '@/components/Dialog';
 
 async function fetchUsers(): Promise<User[]> {
   const token = localStorage.getItem('auth-token');
@@ -55,6 +58,7 @@ async function deleteUser(userId: string): Promise<void> {
 
 export default function AdminUsersTab() {
   const queryClient = useQueryClient();
+  const { dialogState, closeDialog, confirm, success, error } = useDialog();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editUsername, setEditUsername] = useState('');
@@ -69,7 +73,7 @@ export default function AdminUsersTab() {
   const resetPasswordMutation = useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
-      alert('Mật khẩu đã được đặt lại thành 123456');
+      success('Mật khẩu đã được đặt lại thành 123456');
     },
   });
 
@@ -91,9 +95,12 @@ export default function AdminUsersTab() {
   });
 
   const handleResetPassword = (user: User) => {
-    if (window.confirm(`Đặt lại mật khẩu của "${user.username}" về 123456?`)) {
-      resetPasswordMutation.mutate(user.id);
-    }
+    confirm(
+      `Đặt lại mật khẩu của "${user.username}" về 123456?`,
+      () => {
+        resetPasswordMutation.mutate(user.id);
+      }
+    );
   };
 
   const handleEdit = (user: User) => {
@@ -106,9 +113,9 @@ export default function AdminUsersTab() {
 
   const handleSubmitEdit = () => {
     if (!selectedUser) return;
-    
+
     if (!editUsername.trim() || !editEmail.trim()) {
-      alert('Username và email không được để trống');
+      error('Username và email không được để trống');
       return;
     }
 
@@ -123,9 +130,12 @@ export default function AdminUsersTab() {
   };
 
   const handleDelete = (user: User) => {
-    if (window.confirm(`Bạn có chắc muốn xóa người dùng "${user.username}"? Hành động này không thể hoàn tác.`)) {
-      deleteMutation.mutate(user.id);
-    }
+    confirm(
+      `Bạn có chắc muốn xóa người dùng "${user.username}"? Hành động này không thể hoàn tác.`,
+      () => {
+        deleteMutation.mutate(user.id);
+      }
+    );
   };
 
   return (
@@ -215,8 +225,8 @@ export default function AdminUsersTab() {
       )}
 
       {/* Edit User Dialog */}
-      {showEditDialog && selectedUser && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+      {showEditDialog && selectedUser && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[9999]">
           <div className="glass-strong rounded-2xl p-8 max-w-md w-full mx-4 border border-white/20">
             <h3 className="text-2xl font-bold mb-4 text-[var(--neon-cyan)]">Sửa thông tin người dùng</h3>
             <p className="text-gray-300 mb-6">
@@ -296,8 +306,22 @@ export default function AdminUsersTab() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
+
+      {/* Confirm Dialog */}
+      <Dialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        title={dialogState.title}
+        message={dialogState.message}
+        type={dialogState.type}
+        confirmText={dialogState.confirmText}
+        cancelText={dialogState.cancelText}
+        onConfirm={dialogState.onConfirm}
+        onCancel={dialogState.onCancel}
+      />
     </div>
   );
 }

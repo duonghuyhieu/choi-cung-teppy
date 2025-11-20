@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function HelpDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,23 +29,12 @@ export default function HelpDialog() {
     }
   }, [isOpen]);
 
-  return (
-    <>
-      {/* Help Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
-      >
-        💡 Hướng dẫn
-      </button>
-
-      {/* Dialog Portal */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[999999] flex items-start justify-center pt-[5vh] pb-[5vh] px-4 overflow-y-auto bg-black/80 backdrop-blur-sm"
-          onClick={() => setIsOpen(false)}
-          style={{ margin: 0 }}
-        >
+  const dialogContent = (
+    <div
+      className="fixed inset-0 z-[9999] flex items-start justify-center pt-[5vh] pb-[5vh] px-4 overflow-y-auto bg-black/80 backdrop-blur-sm"
+      onClick={() => setIsOpen(false)}
+      style={{ margin: 0 }}
+    >
           {/* Dialog Container */}
           <div
             className="relative bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl my-auto"
@@ -166,7 +156,20 @@ export default function HelpDialog() {
             </div>
           </div>
         </div>
-      )}
+  );
+
+  return (
+    <>
+      {/* Help Button */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
+      >
+        💡 Hướng dẫn
+      </button>
+
+      {/* Dialog Portal */}
+      {isOpen && typeof window !== 'undefined' && createPortal(dialogContent, document.body)}
     </>
   );
 }
