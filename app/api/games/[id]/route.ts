@@ -141,6 +141,16 @@ export async function PUT(
     // Get updated game with links
     const gameWithLinks = await getGameWithLinks(id);
 
+    if (!gameWithLinks) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: 'Game not found after update',
+        },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json<ApiResponse<GameWithLinks>>(
       {
         success: true,
