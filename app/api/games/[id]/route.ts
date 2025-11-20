@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getGameWithLinks, updateGameWithLinks, deleteGame } from '@/lib/db/games';
+import { getGameWithLinks, updateGame, deleteGame, createMultipleDownloadLinks, deleteDownloadLink, getDownloadLinksByGame } from '@/lib/db/games';
+import { createGameAccount, getAccountsByGame, deleteGameAccount } from '@/lib/db/game-accounts';
 import { requireAdmin } from '@/lib/auth/session';
 import { ApiResponse, GameWithLinks, UpdateGameDto } from '@/types';
 
@@ -41,7 +42,7 @@ export async function GET(
   }
 }
 
-// PUT /api/games/[id] - Update game with links (admin only)
+// PUT /api/games/[id] - Update game with links and accounts (admin only)
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -49,24 +50,96 @@ export async function PUT(
   try {
     await requireAdmin();
     const { id } = await params;
-    const body: UpdateGameDto = await request.json();
+    const body = await request.json();
 
-    // Validate links if provided
-    if (body.links && body.links.length > 0) {
-      for (const link of body.links) {
-        if (!link.title || !link.url) {
-          return NextResponse.json<ApiResponse>(
-            {
-              success: false,
-              error: 'Each link must have a title and URL',
-            },
-            { status: 400 }
-          );
+    // Derive game_type from provided data
+    const gameTypes: string[] = [];
+    if (body.crack && body.crack.length > 0) gameTypes.push('crack');
+    if (body.steam_on && body.steam_on.length > 0) gameTypes.push('steam_online');
+    if (body.steam_off && body.steam_off.length > 0) gameTypes.push('steam_offline');
+
+    // Update game basic info
+    const gameData: UpdateGameDto = {
+      name: body.name,
+      description: body.description,
+      thumbnail_url: body.thumbnail_url,
+      save_file_path: body.save_file_path,
+      game_type: gameTypes.length > 0 ? gameTypes as any : undefined,
+    };
+
+    await updateGame(id, gameData);
+
+    // 1. Handle Crack Links - Delete old and create new
+    if (body.crack !== undefined) {
+      const existingLinks = await getDownloadLinksByGame(id);
+      const crackLinks = existingLinks.filter(l => l.version_type === 'crack');
+
+      // Delete old crack links
+      for (const link of crackLinks) {
+        await deleteDownloadLink(link.id);
+      }
+
+      // Create new crack links
+      if (body.crack.length > 0) {
+        const linksToCreate = body.crack.map((link: any) => ({
+          title: link.title,
+          url: link.url,
+          version_type: 'crack'
+        }));
+        await createMultipleDownloadLinks(id, linksToCreate);
+      }
+    }
+
+    // 2. Handle Steam Online Accounts - Delete old and create new
+    if (body.steam_on !== undefined) {
+      const existingAccounts = await getAccountsByGame(id);
+      const onlineAccounts = existingAccounts.filter((a: any) => a.type === 'steam_online');
+
+      // Delete old steam online accounts
+      for (const acc of onlineAccounts) {
+        await deleteGameAccount(acc.id);
+      }
+
+      // Create new steam online accounts
+      if (body.steam_on.length > 0) {
+        for (const acc of body.steam_on) {
+          await createGameAccount({
+            game_id: id,
+            type: 'steam_online',
+            username: acc.username,
+            password: acc.password,
+            guard_link: acc.guard_link
+          });
         }
       }
     }
 
-    const gameWithLinks = await updateGameWithLinks(id, body);
+    // 3. Handle Steam Offline Accounts - Delete old and create new
+    if (body.steam_off !== undefined) {
+      const existingAccounts = await getAccountsByGame(id);
+      const offlineAccounts = existingAccounts.filter((a: any) => a.type === 'steam_offline');
+
+      // Delete old steam offline accounts
+      for (const acc of offlineAccounts) {
+        await deleteGameAccount(acc.id);
+      }
+
+      // Create new steam offline accounts
+      if (body.steam_off.length > 0) {
+        for (const acc of body.steam_off) {
+          await createGameAccount({
+            game_id: id,
+            type: 'steam_offline',
+            username: acc.username,
+            password: acc.password,
+            guard_link: acc.guard_link
+          });
+        }
+      }
+    }
+
+    // Get updated game with links
+    const gameWithLinks = await getGameWithLinks(id);
 
     return NextResponse.json<ApiResponse<GameWithLinks>>(
       {
@@ -86,6 +159,17 @@ export async function PUT(
           error: error.message,
         },
         { status: error.message.includes('Unauthorized') ? 401 : 403 }
+      );
+    }
+
+    // Check if it's a duplicate username error
+    if (error.message.includes('đã tồn tại trong hệ thống')) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          error: error.message,
+        },
+        { status: 409 } // Conflict status code
       );
     }
 
