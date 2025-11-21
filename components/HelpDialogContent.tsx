@@ -206,9 +206,7 @@ export default function HelpDialogContent() {
                 <div>
                   <p className="font-semibold mb-2 text-gray-200">2. Lấy mã Steam Guard</p>
                   <p className="text-sm text-gray-300">• Sau khi nhấn đăng nhập, Steam Guard sẽ yêu cầu mã</p>
-                  <p className="text-sm text-gray-300">• Vào bot Telegram: <a href="https://t.me/ManGardedSHOP_bot" className="text-blue-400 hover:underline" target="_blank">https://t.me/ManGardedSHOP_bot</a></p>
-                  <p className="text-sm text-gray-300">• Gõ /start và làm theo hướng dẫn bot để lấy mã</p>
-                  <p className="text-sm text-gray-300 font-semibold text-yellow-400">• ⚠️ Bạn có 5 PHÚT để lấy mã từ bot!</p>
+                  <p className="text-sm text-gray-300">• Vào đường link để ở tài khoản để lấy mã</p>
                   <img src="/tutorial/image2.png" alt="Telegram Bot" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
                 </div>
 
