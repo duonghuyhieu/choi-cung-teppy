@@ -21,28 +21,42 @@ const ITEMS_PER_PAGE = 9;
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'crack' | 'steam_online' | 'steam_offline'>('all');
 
   const { data: games, isLoading, error } = useQuery({
     queryKey: ['games'],
     queryFn: fetchGames,
   });
 
+  // Filter and search games
+  const filteredGames = games?.filter((game) => {
+    // Search filter
+    const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (game.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+
+    // Type filter
+    const matchesType = selectedFilter === 'all' || game.game_type?.includes(selectedFilter);
+
+    return matchesSearch && matchesType;
+  }) || [];
+
   // Pagination calculations
-  const totalGames = games?.length || 0;
+  const totalGames = filteredGames.length;
   const totalPages = Math.ceil(totalGames / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentGames = games?.slice(startIndex, endIndex) || [];
+  const currentGames = filteredGames.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Reset to page 1 when games data changes
+  // Reset to page 1 when games data, search, or filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [games]);
+  }, [games, searchQuery, selectedFilter]);
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -59,8 +73,8 @@ export default function Home() {
       <div className="container mx-auto px-4 py-16 relative z-10">
         {/* Header */}
         <header className="text-center mb-16">
-          <h1 className="text-7xl font-bold mb-6 bg-gradient-to-r from-[var(--neon-cyan)] via-white to-[var(--neon-cyan)] bg-clip-text text-transparent">
-            GAME SAVER
+          <h1 className="text-7xl font-bold mb-6 text-[#FF10F0] drop-shadow-[0_0_30px_rgba(255,16,240,0.5)]">
+            CHOI CUNG TEPPY
           </h1>
           <p className="text-2xl text-gray-200 font-semibold">
             Tải game và quản lý save game của bạn
@@ -98,6 +112,92 @@ export default function Home() {
               )}
             </div>
 
+            {/* Search and Filter */}
+            {!isLoading && !error && games && games.length > 0 && (
+              <div className="mb-8">
+                {/* Search Box and Filter Buttons in One Row */}
+                <div className="flex flex-col lg:flex-row gap-3 mb-4">
+                  {/* Search Box */}
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="🔍 Tìm kiếm game..."
+                      className="w-full px-6 py-3 bg-gray-800/50 backdrop-blur-sm border border-white/10 rounded-xl focus:outline-none focus:border-[var(--neon-cyan)]/50 focus:shadow-[0_0_20px_rgba(0,240,255,0.2)] transition-all text-white placeholder-gray-400"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Filter Buttons */}
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setSelectedFilter('all')}
+                      className={`px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        selectedFilter === 'all'
+                          ? 'bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] shadow-[0_0_15px_rgba(0,240,255,0.4)]'
+                          : 'glass border border-white/10 hover:border-[var(--neon-cyan)]/50'
+                      }`}
+                    >
+                      🎮 Tất cả
+                    </button>
+                    <button
+                      onClick={() => setSelectedFilter('crack')}
+                      className={`px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        selectedFilter === 'crack'
+                          ? 'bg-gradient-to-r from-green-600 to-green-700 shadow-[0_0_15px_rgba(34,197,94,0.4)]'
+                          : 'glass border border-white/10 hover:border-green-500/50'
+                      }`}
+                    >
+                      🔓 Crack
+                    </button>
+                    <button
+                      onClick={() => setSelectedFilter('steam_offline')}
+                      className={`px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        selectedFilter === 'steam_offline'
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-700 shadow-[0_0_15px_rgba(59,130,246,0.4)]'
+                          : 'glass border border-white/10 hover:border-blue-500/50'
+                      }`}
+                    >
+                      🔵 Steam Offline
+                    </button>
+                    <button
+                      onClick={() => setSelectedFilter('steam_online')}
+                      className={`px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        selectedFilter === 'steam_online'
+                          ? 'bg-gradient-to-r from-purple-600 to-purple-700 shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+                          : 'glass border border-white/10 hover:border-purple-500/50'
+                      }`}
+                    >
+                      🟣 Steam Online
+                    </button>
+                  </div>
+                </div>
+
+                {/* Result count */}
+                {(searchQuery || selectedFilter !== 'all') && (
+                  <div className="text-sm text-gray-400">
+                    Tìm thấy <span className="text-[var(--neon-cyan)] font-semibold">{totalGames}</span> game
+                    {searchQuery && <span> với từ khóa "{searchQuery}"</span>}
+                    {selectedFilter !== 'all' && (
+                      <span> - Loại: {
+                        selectedFilter === 'crack' ? 'Crack' :
+                        selectedFilter === 'steam_offline' ? 'Steam Offline' :
+                        'Steam Online'
+                      }</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Loading State */}
             {isLoading && (
               <div className="text-center py-16">
@@ -113,7 +213,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* Empty State */}
+            {/* Empty State - No games at all */}
             {!isLoading && !error && games && games.length === 0 && (
               <div className="text-center py-20 glass-strong rounded-2xl neon-border">
                 <div className="text-8xl mb-6">🎮</div>
@@ -122,8 +222,33 @@ export default function Home() {
               </div>
             )}
 
+            {/* Empty State - No results found */}
+            {!isLoading && !error && games && games.length > 0 && filteredGames.length === 0 && (
+              <div className="text-center py-20 glass-strong rounded-2xl border border-white/10">
+                <div className="text-8xl mb-6">🔍</div>
+                <h2 className="text-3xl font-bold mb-3 text-white">Không tìm thấy kết quả</h2>
+                <p className="text-gray-400 text-lg mb-6">
+                  {searchQuery && `Không có game nào khớp với "${searchQuery}"`}
+                  {selectedFilter !== 'all' && !searchQuery && `Không có game loại ${
+                    selectedFilter === 'crack' ? 'Crack' :
+                    selectedFilter === 'steam_offline' ? 'Steam Offline' :
+                    'Steam Online'
+                  }`}
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedFilter('all');
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-xl font-semibold hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all"
+                >
+                  Xóa bộ lọc
+                </button>
+              </div>
+            )}
+
             {/* Games Grid */}
-            {!isLoading && !error && games && games.length > 0 && (
+            {!isLoading && !error && games && games.length > 0 && filteredGames.length > 0 && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {currentGames.map((game) => (
@@ -252,7 +377,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="text-center mt-20 py-8 border-t border-white/10">
           <p className="text-gray-400">
-            Game Saver -
+            Choi Cung Teppy -
             <span className="text-[var(--neon-cyan)] ml-2">Quản lý save game dễ dàng</span>
           </p>
         </footer>

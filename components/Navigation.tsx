@@ -44,9 +44,9 @@ export default function Navigation() {
     <nav className="glass-strong border-b border-white/10 sticky top-0 z-50 backdrop-blur-xl">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-[var(--neon-cyan)] to-white bg-clip-text text-transparent hover:from-white hover:to-[var(--neon-cyan)] transition-all duration-300 flex items-center gap-2">
+          <Link href="/" className="text-3xl font-bold text-[#FF10F0] hover:text-[#EC4899] hover:scale-105 transition-all duration-300 flex items-center gap-2">
             <span className="text-4xl">🎮</span>
-            <span>GAME SAVER</span>
+            <span>CHOI CUNG TEPPY</span>
           </Link>
 
           {/* Navigation Tabs */}

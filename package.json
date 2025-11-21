@@ -1,5 +1,5 @@
 {
-  "name": "@duonghuyhieu/game-saver",
+  "name": "@duonghuyhieu/choi-cung-teppy",
   "version": "1.0.5",
   "private": false,
   "description": "CLI tool to backup and sync game saves to cloud",
@@ -24,7 +24,7 @@
   ],
   "type": "module",
   "bin": {
-    "game-saver": "./bin/cli.js"
+    "choi-cung-teppy": "./bin/cli.js"
   },
   "scripts": {
     "dev": "next dev",

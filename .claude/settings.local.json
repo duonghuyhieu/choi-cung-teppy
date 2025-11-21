@@ -47,7 +47,10 @@
       "Bash(npm run build:cli:*)",
       "Bash(del \"D:\\WorkSpace\\crack-game\\web\\migrations\\add-unique-username-global.sql\")",
       "Bash(del \"D:\\WorkSpace\\crack-game\\web\\migrations\\fix-duplicate-usernames.sql\")",
-      "Bash(del \"D:\\WorkSpace\\crack-game\\web\\migrations\\fix-duplicate-usernames-delete.sql\")"
+      "Bash(del \"D:\\WorkSpace\\crack-game\\web\\migrations\\fix-duplicate-usernames-delete.sql\")",
+      "Bash(powershell -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory(''hướng dẫn chơi offline.docx'', ''temp_docx'')\")",
+      "Bash(if exist temp_docx rmdir /s /q temp_docx)",
+      "Bash(powershell -Command \"Get-ChildItem -Directory | Select-Object Name\")"
     ],
     "deny": [],
     "ask": []

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Game Saver - Save and Share Your Game Progress",
+  title: "Choi Cung Teppy - Save and Share Your Game Progress",
   description: "Upload, backup, and share your game save files with the community",
 };
 

@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useHelpDialog } from '@/lib/contexts/HelpDialogContext';
 
+type TabType = 'cli' | 'offline' | 'tips';
+
 export default function HelpDialogContent() {
   const { isOpen, closeDialog: onClose } = useHelpDialog();
+  const [activeTab, setActiveTab] = useState<TabType>('cli');
+
   // Prevent body scroll when dialog is open
   useEffect(() => {
     if (isOpen) {
@@ -59,8 +63,45 @@ export default function HelpDialogContent() {
           </button>
         </div>
 
+        {/* Tabs */}
+        <div className="border-b border-gray-700 px-6 pt-4">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab('cli')}
+              className={`px-4 py-2 font-semibold transition-all ${
+                activeTab === 'cli'
+                  ? 'text-blue-400 border-b-2 border-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              🖥️ CLI
+            </button>
+            <button
+              onClick={() => setActiveTab('offline')}
+              className={`px-4 py-2 font-semibold transition-all ${
+                activeTab === 'offline'
+                  ? 'text-blue-400 border-b-2 border-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              🎮 Chơi Offline
+            </button>
+            <button
+              onClick={() => setActiveTab('tips')}
+              className={`px-4 py-2 font-semibold transition-all ${
+                activeTab === 'tips'
+                  ? 'text-blue-400 border-b-2 border-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              💡 Mẹo Hay
+            </button>
+          </div>
+        </div>
+
         {/* Content - Scrollable */}
-        <div className="overflow-y-auto flex-1 p-6" style={{ maxHeight: 'calc(90vh - 140px)' }}>
+        <div className="overflow-y-auto flex-1 p-6" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+          {activeTab === 'cli' && (
           <div className="space-y-6">
             {/* Section 1: Cài đặt CLI */}
             <section>
@@ -133,8 +174,103 @@ export default function HelpDialogContent() {
                 <p className="text-sm text-gray-300">3. Save tự động ghi vào thư mục game!</p>
               </div>
             </section>
+          </div>
+          )}
 
-            {/* Tips */}
+          {activeTab === 'offline' && (
+          <div className="space-y-6">
+            {/* Ghi chú quan trọng */}
+            <section className="bg-red-500/10 border-2 border-red-500 rounded-lg p-4">
+              <h3 className="text-xl font-bold mb-2 text-red-400">⚠️ GHI CHÚ QUAN TRỌNG:</h3>
+              <p className="text-sm text-red-300 font-semibold">
+                ĐIỂM QUAN TRỌNG NHẤT TRONG HƯỚNG DẪN LÀ <span className="text-red-400 text-base">SỐ 6</span>.
+                NẾU BẠN BỎ QUA CÁCH THOÁT CHÍNH XÁC KHỎI TÀI KHOẢN STEAM HOẶC QUÊN CÁCH ĐĂNG XUẤT CHÍNH XÁC,
+                KÍCH HOẠT CỦA BẠN CÓ THỂ BỊ MẤT!! VÌ VẬY, ĐỌC KỸ HƯỚNG DẪN VÀ LÀM THEO!
+              </p>
+            </section>
+
+            {/* Hướng dẫn chi tiết */}
+            <section>
+              <h3 className="text-xl font-bold mb-3 text-blue-400">📖 Hướng dẫn từng bước:</h3>
+              <div className="bg-gray-700/50 rounded-lg p-4 space-y-4">
+                {/* Bước 1 */}
+                <div>
+                  <p className="font-semibold mb-2 text-gray-200">1. Đăng nhập Steam</p>
+                  <p className="text-sm text-gray-300">• Khởi chạy ứng dụng Steam trên PC</p>
+                  <p className="text-sm text-gray-300">• Nhập username và password bạn nhận được</p>
+                  <p className="text-sm text-gray-300 font-semibold text-yellow-400">• ⚠️ Nhớ check "Remember me"</p>
+                  <img src="/tutorial/image1.png" alt="Steam Login" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                </div>
+
+                {/* Bước 2 */}
+                <div>
+                  <p className="font-semibold mb-2 text-gray-200">2. Lấy mã Steam Guard</p>
+                  <p className="text-sm text-gray-300">• Sau khi nhấn đăng nhập, Steam Guard sẽ yêu cầu mã</p>
+                  <p className="text-sm text-gray-300">• Vào bot Telegram: <a href="https://t.me/ManGardedSHOP_bot" className="text-blue-400 hover:underline" target="_blank">https://t.me/ManGardedSHOP_bot</a></p>
+                  <p className="text-sm text-gray-300">• Gõ /start và làm theo hướng dẫn bot để lấy mã</p>
+                  <p className="text-sm text-gray-300 font-semibold text-yellow-400">• ⚠️ Bạn có 5 PHÚT để lấy mã từ bot!</p>
+                  <img src="/tutorial/image2.png" alt="Telegram Bot" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                </div>
+
+                {/* Bước 3 */}
+                <div>
+                  <p className="font-semibold mb-2 text-gray-200">3. Tắt Remote Play</p>
+                  <p className="text-sm text-gray-300">• Vào Settings → Remote Play</p>
+                  <p className="text-sm text-gray-300">• Tắt chức năng Remote Play</p>
+                  <p className="text-sm text-gray-300">• Nếu đã tắt sẵn, bỏ qua bước này</p>
+                  <img src="/tutorial/image3.png" alt="Remote Play Settings" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                </div>
+
+                {/* Bước 4 */}
+                <div>
+                  <p className="font-semibold mb-2 text-gray-200">4. Tải game và tắt Steam Cloud</p>
+                  <p className="text-sm text-gray-300">• Tải game từ thư viện Steam</p>
+                  <p className="text-sm text-gray-300">• Click phải vào game → Properties</p>
+                  <img src="/tutorial/image4.png" alt="Game Properties" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                  <p className="text-sm text-gray-300 mt-2">• Tắt "Steam Cloud synchronization"</p>
+                  <img src="/tutorial/image5.png" alt="Steam Cloud Settings" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                </div>
+
+                {/* Bước 5 */}
+                <div>
+                  <p className="font-semibold mb-2 text-gray-200">5. Chạy game và chuyển Offline</p>
+                  <p className="text-sm text-gray-300">• Chạy game ở chế độ ONLINE</p>
+                  <p className="text-sm text-gray-300">• Vào menu chính rồi thoát game</p>
+                  <p className="text-sm text-gray-300">• Chuyển Steam sang Offline mode (góc trên trái → Go offline)</p>
+                  <img src="/tutorial/image6.png" alt="Go Offline" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                </div>
+
+                {/* Bước 6 */}
+                <div className="bg-red-500/10 border border-red-500 rounded-lg p-3">
+                  <p className="font-semibold mb-2 text-red-400">6. ⚠️ CÁCH THAY ĐỔI TÀI KHOẢN STEAM (QUAN TRỌNG!)</p>
+
+                  <div className="ml-4 space-y-2">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-200">6.1. Đăng xuất tài khoản hiện tại:</p>
+                      <p className="text-sm text-gray-300">• Trong thư viện Steam, góc trên phải</p>
+                      <p className="text-sm text-gray-300">• Click vào tên tài khoản</p>
+                      <p className="text-sm text-gray-300">• Chọn "Sign in to another account"</p>
+                      <img src="/tutorial/image7.png" alt="Sign in to another account" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                      <p className="text-sm text-gray-300 font-semibold text-yellow-400 mt-2">• Nhớ check "Remember me"</p>
+                      <img src="/tutorial/image8.png" alt="Remember me checkbox" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-semibold text-gray-200">6.2. Chọn tài khoản:</p>
+                      <p className="text-sm text-gray-300">• Khi nhấn "Continue", Steam sẽ hiển thị danh sách tài khoản đã lưu</p>
+                      <img src="/tutorial/image9.png" alt="Select Account" className="mt-2 rounded-lg border border-gray-600 max-w-full h-auto" />
+                      <p className="text-sm text-gray-300 mt-2">• Chọn tài khoản bạn muốn đăng nhập</p>
+                      <p className="text-sm text-gray-300">• Nếu cần quay lại tài khoản cũ, làm tương tự</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+          )}
+
+          {activeTab === 'tips' && (
+          <div className="space-y-6">
             <section className="bg-blue-500/10 border border-blue-500 rounded-lg p-4">
               <h3 className="text-lg font-bold mb-2 text-blue-400">💡 Mẹo hay:</h3>
               <ul className="space-y-1 text-sm text-gray-200">
@@ -145,6 +281,7 @@ export default function HelpDialogContent() {
               </ul>
             </section>
           </div>
+          )}
         </div>
 
         {/* Footer - Fixed */}

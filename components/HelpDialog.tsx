@@ -132,6 +132,40 @@ export default function HelpDialog() {
                   </div>
                 </section>
 
+                {/* Section 5: Hướng dẫn chơi game offline */}
+                <section>
+                  <h3 className="text-xl font-bold mb-3 text-blue-400">🎮 Hướng dẫn chơi game offline</h3>
+                  <div className="bg-gray-700/50 rounded-lg p-4 space-y-3">
+                    <div>
+                      <p className="font-semibold mb-2 text-gray-200">Bước 1: Tải game</p>
+                      <p className="text-sm text-gray-300">• Vào trang chi tiết game</p>
+                      <p className="text-sm text-gray-300">• Click vào link tải game (Crack, Steam Offline, hoặc Steam Online)</p>
+                      <p className="text-sm text-gray-300">• Giải nén và cài đặt game</p>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold mb-2 text-gray-200">Bước 2: Lấy tài khoản Steam (nếu cần)</p>
+                      <p className="text-sm text-gray-300">• Với game Steam Offline/Online: Click nút "Lấy tài khoản"</p>
+                      <p className="text-sm text-gray-300">• Copy username và password</p>
+                      <p className="text-sm text-gray-300">• Đăng nhập Steam với tài khoản đã lấy</p>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold mb-2 text-gray-200">Bước 3: Tải save file</p>
+                      <p className="text-sm text-gray-300">• Vào tab "Save Files" của game</p>
+                      <p className="text-sm text-gray-300">• Chọn save file bạn muốn tải (public hoặc của bạn)</p>
+                      <p className="text-sm text-gray-300">• Click "Download" để tải về</p>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold mb-2 text-gray-200">Bước 4: Copy save vào thư mục game</p>
+                      <p className="text-sm text-gray-300">• Mở thư mục save của game (thường ở %APPDATA% hoặc Documents)</p>
+                      <p className="text-sm text-gray-300">• Copy file save đã tải vào đúng thư mục</p>
+                      <p className="text-sm text-gray-300">• Khởi động game và chơi!</p>
+                    </div>
+                  </div>
+                </section>
+
                 {/* Tips */}
                 <section className="bg-blue-500/10 border border-blue-500 rounded-lg p-4">
                   <h3 className="text-lg font-bold mb-2 text-blue-400">💡 Mẹo hay:</h3>
